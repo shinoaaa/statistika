@@ -1,0 +1,671 @@
+{
+  "metadata": {
+    "versi": "1.0",
+    "total_soal": 54,
+    "komposisi_per_kategori": {
+      "logika": 18,
+      "cerita": 18,
+      "numerikal": 18
+    },
+    "aturan_ronde": {
+      "soal_per_ronde": 9,
+      "detail_per_ronde": {
+        "logika": 3,
+        "cerita": 3,
+        "numerikal": 3
+      },
+      "batas_waktu_per_soal_detik": 45,
+      "estimasi_durasi_per_ronde_menit": "2.5 - 3.5"
+    }
+  },
+  "soal": [
+    {
+      "id": "L01",
+      "kategori": "logika",
+      "pertanyaan": "Semua anggota tim desain memakai kartu akses biru. Sebagian pemegang kartu akses biru juga bekerja di divisi IT. Budi bukan anggota tim desain, tetapi ia bekerja di divisi IT. Manakah pernyataan yang pasti benar?",
+      "pilihan": {
+        "A": "Semua staf divisi IT memakai kartu akses biru.",
+        "B": "Budi pasti memakai kartu akses biru.",
+        "C": "Budi belum tentu memakai kartu akses biru.",
+        "D": "Tidak ada anggota tim desain yang bekerja di divisi IT."
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "L02",
+      "kategori": "logika",
+      "pertanyaan": "Kedai kopi memberi diskon khusus hanya jika pelanggan membawa tumbler sendiri dan memesan sebelum pukul 10.00. Hari ini Raka memesan pukul 09.30, namun ia tidak mendapat diskon. Kesimpulan yang paling tepat adalah...",
+      "pilihan": {
+        "A": "Kedai kopi menutup promo sebelum pukul 10.00.",
+        "B": "Diskon hanya berlaku untuk pesanan di atas pukul 10.00.",
+        "C": "Raka tidak membawa tumbler sendiri.",
+        "D": "Raka memesan pada jam yang salah."
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "L03",
+      "kategori": "logika",
+      "pertanyaan": "Nilai ujian Rina lebih tinggi daripada Dika, tetapi lebih rendah daripada Sinta. Nilai Tari lebih tinggi daripada Sinta, sedangkan nilai Eko berada tepat di antara Rina dan Dika. Siapakah yang mendapat nilai tertinggi kedua?",
+      "pilihan": {
+        "A": "Sinta",
+        "B": "Rina",
+        "C": "Tari",
+        "D": "Eko"
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "L04",
+      "kategori": "logika",
+      "pertanyaan": "Di sebuah perpustakaan pribadi, tidak ada buku fiksi yang bersampul merah. Semua buku di rak paling atas bersampul merah. Jika setiap novel termasuk buku fiksi, maka kesimpulan yang pasti benar adalah...",
+      "pilihan": {
+        "A": "Semua buku non-fiksi berada di rak paling atas.",
+        "B": "Tidak ada novel yang diletakkan di rak paling atas.",
+        "C": "Semua buku bersampul merah adalah novel.",
+        "D": "Sebagian novel diletakkan di rak paling atas."
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "L05",
+      "kategori": "logika",
+      "pertanyaan": "Jika hari ini hujan deras, maka latihan basket dipindah ke aula tertutup. Jika latihan dipindah ke aula tertutup, maka lapangan luar dikosongkan. Ternyata hari ini lapangan luar tetap ramai dipakai latihan. Artinya...",
+      "pilihan": {
+        "A": "Aula tertutup sedang direnovasi.",
+        "B": "Hari ini tidak turun hujan deras.",
+        "C": "Hari ini turun hujan deras.",
+        "D": "Latihan basket tetap pindah meskipun lapangan luar ramai."
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "L06",
+      "kategori": "logika",
+      "pertanyaan": "Lima teman (A, B, C, D, E) duduk berjajar di satu bangku panjang. C duduk tepat di kursi tengah. A duduk di ujung kiri dan tidak bersebelahan dengan B. D duduk tepat di sebelah kanan C, tetapi tidak di ujung kanan. Siapa yang duduk di antara A dan C?",
+      "pilihan": {
+        "A": "B",
+        "B": "E",
+        "C": "D",
+        "D": "Tidak dapat ditentukan"
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "L07",
+      "kategori": "logika",
+      "pertanyaan": "Syarat lulus mata kuliah Statistika adalah lulus ujian akhir dan mengumpulkan proyek data. Fajar mendapat nilai tertinggi pada ujian akhir, namun ia lupa mengumpulkan proyek data. Kesimpulan yang paling tepat adalah...",
+      "pilihan": {
+        "A": "Sebagian mahasiswa lulus tanpa mengumpulkan proyek data.",
+        "B": "Proyek data hanya bersifat tambahan bagi Fajar.",
+        "C": "Fajar tetap lulus karena nilai ujian akhirnya paling tinggi.",
+        "D": "Fajar tidak lulus mata kuliah Statistika."
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "L08",
+      "kategori": "logika",
+      "pertanyaan": "Semua buah di keranjang A rasanya manis. Tidak ada buah di keranjang B yang berwarna kuning. Sebagian buah yang rasanya manis berwarna kuning. Berdasarkan informasi itu, pernyataan mana yang pasti salah?",
+      "pilihan": {
+        "A": "Ada buah manis di keranjang B.",
+        "B": "Ada buah berwarna kuning di keranjang B.",
+        "C": "Sebagian buah di keranjang A tidak berwarna kuning.",
+        "D": "Semua buah di keranjang A manis dan berwarna kuning."
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "L09",
+      "kategori": "logika",
+      "pertanyaan": "Panitia lomba mewajibkan peserta menyerahkan berkas fisik sebelum Jumat atau mengirimkannya lewat email resmi. Panitia menyatakan berkas milik Nanda ditolak karena tidak memenuhi aturan cara penyerahan. Artinya...",
+      "pilihan": {
+        "A": "Nanda mengirim berkas lewat email resmi pada hari Kamis.",
+        "B": "Nanda menyerahkan berkas fisik pada hari Kamis dan juga lewat email resmi.",
+        "C": "Nanda tidak menyerahkan berkas fisik sebelum Jumat dan tidak mengirimkannya lewat email resmi.",
+        "D": "Nanda menyerahkan berkas fisik pada hari Rabu."
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "L10",
+      "kategori": "logika",
+      "pertanyaan": "Dalam kelompok belajar, Dimas lebih rajin daripada Gilang, tetapi lebih malas daripada Hana. Fani lebih rajin daripada Dimas, namun tidak lebih rajin daripada Hana. Siapakah yang berada di urutan ketiga paling rajin?",
+      "pilihan": {
+        "A": "Hana",
+        "B": "Fani",
+        "C": "Gilang",
+        "D": "Dimas"
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "L11",
+      "kategori": "logika",
+      "pertanyaan": "Semua kendaraan bermesin bensin mengeluarkan asap knalpot. Sepeda dan motor listrik tidak mengeluarkan asap knalpot. Di parkiran ada sebuah kendaraan yang tidak mengeluarkan asap knalpot. Kesimpulan yang paling tepat adalah...",
+      "pilihan": {
+        "A": "Kendaraan tersebut pasti bukan kendaraan bermesin bensin.",
+        "B": "Kendaraan tersebut pasti sepeda.",
+        "C": "Kendaraan tersebut dilarang masuk ke parkiran umum.",
+        "D": "Kendaraan tersebut pasti motor listrik."
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "L12",
+      "kategori": "logika",
+      "pertanyaan": "Hanya karyawan dengan masa kerja minimal 2 tahun yang berhak mengajukan cuti panjang. Rendra sudah bekerja selama 3 tahun, namun pengajuan cuti panjangnya tetap ditolak atasan. Penjelasan yang paling logis adalah...",
+      "pilihan": {
+        "A": "Aturan perusahaan baru saja dihapuskan untuk seluruh karyawan.",
+        "B": "Masa kerja Rendra belum mencapai batas minimal.",
+        "C": "Masa kerja minimal 2 tahun adalah syarat wajib, tetapi bukan satu-satunya syarat persetujuan.",
+        "D": "Karyawan dengan masa kerja 3 tahun tidak boleh mengambil cuti."
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "L13",
+      "kategori": "logika",
+      "pertanyaan": "Empat mata kuliah (Matematika, Fisika, Kimia, Biologi) dijadwalkan dari Senin sampai Kamis, satu per hari. Matematika dijadwalkan pada hari Rabu. Kimia harus tepat satu hari sebelum Biologi. Fisika tidak boleh dijadwalkan pada hari Senin. Mata kuliah apakah yang dijadwalkan pada hari Senin?",
+      "pilihan": {
+        "A": "Kimia",
+        "B": "Biologi",
+        "C": "Matematika",
+        "D": "Fisika"
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "L14",
+      "kategori": "logika",
+      "pertanyaan": "Mesin cuci akan menyala hanya jika lampu indikator berwarna hijau dan pintu terkunci rapat. Saat ini lampu indikator sudah berwarna hijau, tetapi mesin cuci belum juga menyala. Dengan asumsi mesin tidak rusak, kesimpulan yang pasti benar adalah...",
+      "pilihan": {
+        "A": "Kabel listrik mesin cuci belum terpasang.",
+        "B": "Air di dalam keran belum mengalir.",
+        "C": "Lampu indikator sebenarnya berwarna merah.",
+        "D": "Pintu mesin cuci belum terkunci rapat."
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "L15",
+      "kategori": "logika",
+      "pertanyaan": "Di sebuah kampus, semua mahasiswa yang gemar membaca juga gemar menulis. Sebagian mahasiswa yang gemar menulis bergabung ke klub pers. Lutfi tergabung dalam klub pers, tetapi ia mengaku tidak gemar membaca. Pernyataan manakah yang pasti benar?",
+      "pilihan": {
+        "A": "Lutfi pasti tidak gemar menulis.",
+        "B": "Semua anggota klub pers pasti gemar membaca.",
+        "C": "Semua anggota klub pers tidak gemar membaca.",
+        "D": "Lutfi mungkin gemar menulis, atau mungkin juga tidak."
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "L16",
+      "kategori": "logika",
+      "pertanyaan": "Tiga kotak (Merah, Biru, Hijau) masing-masing berisi tepat satu benda: Pulpen, Penghapus, atau Penggaris. Kotak Merah tidak berisi Pulpen. Penggaris tidak berada di kotak Biru maupun kotak Merah. Benda apakah yang ada di dalam kotak Biru?",
+      "pilihan": {
+        "A": "Penghapus",
+        "B": "Pulpen",
+        "C": "Penggaris",
+        "D": "Tidak dapat ditentukan"
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "L17",
+      "kategori": "logika",
+      "pertanyaan": "Setiap peserta pelatihan berhak mendapat sertifikat jika hadir minimal 90% dari total waktu acara. Setelah acara selesai, Deni tercatat tidak mendapatkan sertifikat, sedangkan Tasya mendapatkannya. Kesimpulan yang paling tepat adalah...",
+      "pilihan": {
+        "A": "Deni hadir kurang dari 90% dari total waktu acara.",
+        "B": "Tasya pasti hadir tepat 90% dari total waktu acara.",
+        "C": "Semua peserta yang hadir kurang dari 90% tetap diberi sertifikat.",
+        "D": "Deni tidak hadir sama sekali dalam acara tersebut."
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "L18",
+      "kategori": "logika",
+      "pertanyaan": "Dalam pemungutan suara ketua kelas, suara untuk Putri lebih banyak daripada Kevin, tetapi lebih sedikit daripada Maya. Suara untuk Bagas lebih sedikit daripada Kevin, tetapi lebih banyak daripada Nisa. Siapakah yang menempati peringkat keempat suara terbanyak?",
+      "pilihan": {
+        "A": "Bagas",
+        "B": "Putri",
+        "C": "Nisa",
+        "D": "Kevin"
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "C01",
+      "kategori": "cerita",
+      "pertanyaan": "Perpustakaan kampus buka Senin–Jumat pukul 08.00–17.00, dan Sabtu pukul 09.00–13.00. Bulan ini ruang diskusi lantai dua ditutup khusus setiap hari Rabu untuk perawatan AC, sedangkan ruang baca lantai satu tetap beroperasi normal. Jika Doni datang pada hari Rabu pukul 15.30 untuk kerja kelompok di ruang diskusi, apa yang terjadi?",
+      "pilihan": {
+        "A": "Seluruh gedung perpustakaan tutup pada hari Rabu.",
+        "B": "Doni tetap bisa memakai ruang diskusi hingga pukul 17.00.",
+        "C": "Doni tidak bisa memakai ruang diskusi, tetapi masih bisa masuk ke ruang baca lantai satu.",
+        "D": "Perpustakaan hanya buka sampai pukul 13.00 pada hari Rabu."
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "C02",
+      "kategori": "cerita",
+      "pertanyaan": "Di sebuah kedai, memasak makanan butuh 12 menit, sedangkan membuat minuman butuh 4 menit dan keduanya dikerjakan bersamaan oleh staf berbeda. Pembayaran di kasir baru dilakukan setelah semua pesanan diantar ke meja dan memakan waktu 2 menit. Jika Arman memesan makanan dan minuman pukul 12.10, pukul berapa paling cepat ia selesai membayar?",
+      "pilihan": {
+        "A": "12.26",
+        "B": "12.22",
+        "C": "12.28",
+        "D": "12.24"
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "C03",
+      "kategori": "cerita",
+      "pertanyaan": "Untuk mengganti kartu mahasiswa yang rusak atau hilang, pemohon wajib membawa fotokopi KTP dan surat pengantar dari program studi. Khusus bagi mahasiswa tingkat akhir, wajib melampirkan surat keterangan dari perpustakaan sebagai syarat bebas tanggungan. Siska adalah mahasiswa semester tiga yang kartunya patah. Berkas apa saja yang wajib ia bawa?",
+      "pilihan": {
+        "A": "Surat keterangan dari perpustakaan dan fotokopi KTP saja.",
+        "B": "Fotokopi KTP, surat pengantar prodi, dan surat keterangan dari perpustakaan.",
+        "C": "Fotokopi KTP dan surat pengantar program studi saja.",
+        "D": "Fotokopi KTP saja tanpa surat pengantar prodi."
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "C04",
+      "kategori": "cerita",
+      "pertanyaan": "Bus kampus berangkat dari halte utama setiap 20 menit sekali mulai pukul 06.00 pagi. Waktu tempuh menuju gedung teknik adalah 15 menit pada jam normal, tetapi meningkat menjadi 25 menit pada jam sibuk (pukul 07.00–08.30). Jika Lina tiba di halte utama pukul 07.10, pukul berapa paling cepat ia tiba di gedung teknik?",
+      "pilihan": {
+        "A": "07.50",
+        "B": "07.40",
+        "C": "07.45",
+        "D": "07.35"
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "C05",
+      "kategori": "cerita",
+      "pertanyaan": "Tim presentasi berisi Maya, Riko, Galih, dan Tari harus membagi empat peran: pembuka, isi materi, tanya jawab, dan penutup. Maya tidak mau menjadi pembuka maupun penutup. Galih bersedia di bagian mana saja asal bukan isi materi. Jika Tari memilih menjadi pembuka dan Riko meminta bagian penutup, tugas apakah yang harus diambil Galih?",
+      "pilihan": {
+        "A": "Pembuka",
+        "B": "Penutup",
+        "C": "Isi materi",
+        "D": "Tanya jawab"
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "C06",
+      "kategori": "cerita",
+      "pertanyaan": "Sebuah toko menawarkan dua promo yang tidak boleh digabung: Promo A memberi potongan Rp10.000 untuk belanja minimal Rp50.000, sedangkan Promo B memberi diskon 20% untuk semua total belanja tanpa minimal harga. Jika total belanja Budi adalah Rp60.000, pilihan promo mana yang paling hemat dan berapa total yang dibayar?",
+      "pilihan": {
+        "A": "Promo B dengan total bayar Rp48.000",
+        "B": "Promo A dengan total bayar Rp48.000",
+        "C": "Promo A dengan total bayar Rp50.000",
+        "D": "Promo B dengan total bayar Rp50.000"
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "C07",
+      "kategori": "cerita",
+      "pertanyaan": "Dalam lomba estafet empat pelari, pelari pertama menyelesaikan bagiannya dalam 3 menit. Pelari kedua berlari 1 menit lebih lambat daripada pelari pertama. Pelari ketiga mencatat waktu 2 menit, sedangkan pelari keempat menyelesaikan bagiannya dengan waktu yang sama seperti pelari pertama. Berapa total waktu tim tersebut?",
+      "pilihan": {
+        "A": "10 menit",
+        "B": "11 menit",
+        "C": "12 menit",
+        "D": "13 menit"
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "C08",
+      "kategori": "cerita",
+      "pertanyaan": "Tugas kelompok wajib dikumpulkan dalam format PDF paling lambat Minggu pukul 23.59. Keterlambatan hingga 24 jam dikenai potongan 10 poin, sedangkan lewat dari 24 jam dianggap nol. Kelompok C mengunggah file berformat Word pada Minggu pukul 22.00, lalu baru menyadari kesalahannya dan mengganti ke format PDF pada Senin pukul 18.00. Bagaimana status tugas mereka?",
+      "pilihan": {
+        "A": "Mendapat nilai nol karena dianggap lewat 24 jam.",
+        "B": "Dinilai terlambat dan terkena potongan 10 poin.",
+        "C": "Terkena potongan 20 poin karena salah format.",
+        "D": "Nilai utuh karena sudah mengunggah sebelum Minggu 23.59."
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "C09",
+      "kategori": "cerita",
+      "pertanyaan": "Andi, Bayu, dan Citra patungan membeli hadiah seharga Rp180.000 yang dibagi rata. Di kasir, seluruh tagihan ditalangi dulu oleh Bayu karena Andi lupa membawa uang tunai, sementara Citra langsung melunasi bagiannya ke Bayu malam itu. Keesokan harinya Andi menyerahkan selembar uang Rp100.000 kepada Bayu. Berapa kembalian yang harus diterima Andi?",
+      "pilihan": {
+        "A": "Rp60.000",
+        "B": "Rp30.000",
+        "C": "Rp20.000",
+        "D": "Rp40.000"
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "C10",
+      "kategori": "cerita",
+      "pertanyaan": "Di sebuah perusahaan, ruang rapat besar hanya boleh dipesan oleh kepala divisi, sedangkan ruang rapat kecil boleh dipesan oleh siapa saja kecuali pada hari Senin pagi (08.00–12.00). Hari ini hari Senin pukul 14.00, dan seorang staf magang bernama Rian butuh ruangan untuk diskusi singkat. Ruangan mana yang dapat dipesan oleh Rian?",
+      "pilihan": {
+        "A": "Ruang rapat kecil karena saat itu sudah bukan Senin pagi.",
+        "B": "Ruang rapat besar karena waktunya sudah lewat tengah hari.",
+        "C": "Rian harus menunggu hari Selasa untuk memesan ruang rapat kecil.",
+        "D": "Tidak ada ruangan yang boleh dipesan Rian pada hari Senin."
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "C11",
+      "kategori": "cerita",
+      "pertanyaan": "Nadia berbelanja 2 botol sabun cair, 1 bungkus kopi, dan 3 kotak susu. Harga normal satuan adalah sabun Rp25.000, kopi Rp18.000, dan susu Rp12.000. Khusus hari ini, produk susu memiliki promo 'beli 2 gratis 1'. Berapakah total uang yang harus dibayar Nadia di kasir?",
+      "pilihan": {
+        "A": "Rp92.000",
+        "B": "Rp80.000",
+        "C": "Rp86.000",
+        "D": "Rp104.000"
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "C12",
+      "kategori": "cerita",
+      "pertanyaan": "Jadwal piket lab dilakukan bergiliran oleh Dito, Ega, Fajar, dan Gilang mulai hari Senin (satu orang per hari, Sabtu dan Minggu libur). Senin ini adalah giliran Dito. Kebetulan hari Kamis adalah tanggal merah sehingga jadwal piket hari itu ditiadakan dan urutan dilanjut ke hari kerja berikutnya. Siapa yang bertugas piket pada hari Jumat?",
+      "pilihan": {
+        "A": "Ega",
+        "B": "Gilang",
+        "C": "Fajar",
+        "D": "Dito"
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "C13",
+      "kategori": "cerita",
+      "pertanyaan": "Sebuah paket dikirim pada hari Selasa pukul 09.00 dengan durasi perjalanan normal 36 jam. Namun operasional pengiriman berhenti total selama hari Rabu (24 jam penuh mulai pukul 00.00 hingga 24.00) karena libur nasional, dan baru bergerak kembali pada Kamis pukul 00.00. Pukul berapa paket tersebut diperkirakan tiba?",
+      "pilihan": {
+        "A": "Jumat pukul 09.00",
+        "B": "Kamis pukul 09.00",
+        "C": "Kamis pukul 21.00",
+        "D": "Rabu pukul 21.00"
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "C14",
+      "kategori": "cerita",
+      "pertanyaan": "Dalam kuis berjumlah 10 soal, jawaban benar bernilai +5, jawaban salah bernilai -2, dan soal yang dikosongkan bernilai 0. Bima berhasil menjawab 7 soal dengan benar dan hanya mengosongkan 1 soal (sisanya dijawab salah). Berapakah total skor Bima?",
+      "pilihan": {
+        "A": "35",
+        "B": "31",
+        "C": "29",
+        "D": "33"
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "C15",
+      "kategori": "cerita",
+      "pertanyaan": "Bagas berjalan menuju warung yang berjarak 200 meter dari rumahnya. Ketika baru menempuh tepat setengah perjalanan, ia sadar dompetnya tertinggal sehingga ia berbalik pulang mengambil dompet, lalu berangkat lagi ke warung, dan terakhir pulang ke rumah. Berapa total jarak yang ditempuh Bagas seluruhnya?",
+      "pilihan": {
+        "A": "600 meter",
+        "B": "800 meter",
+        "C": "500 meter",
+        "D": "400 meter"
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "C16",
+      "kategori": "cerita",
+      "pertanyaan": "Untuk memasuki laboratorium komputer, mahasiswa wajib mengenakan jas lab dan sepatu tertutup. Jika ada praktik perakitan perangkat keras, mahasiswa wajib menambah gelang antistatis. Hari ini kelas hanya mengerjakan penyusunan laporan dengan aplikasi pengolah kata tanpa menyentuh perangkat keras dalam casing. Perlengkapan apa yang tetap wajib dipakai?",
+      "pilihan": {
+        "A": "Sepatu tertutup dan gelang antistatis saja",
+        "B": "Tidak ada perlengkapan wajib karena hanya mengetik",
+        "C": "Jas lab, sepatu tertutup, dan gelang antistatis",
+        "D": "Jas lab dan sepatu tertutup saja"
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "C17",
+      "kategori": "cerita",
+      "pertanyaan": "Powerbank berkapasitas 10.000 mAh diisi dari kondisi kosong (0%) mulai pukul 10.00 dengan kecepatan pengisian 2.000 mAh per jam. Setelah berjalan 2 jam, listrik padam selama 30 menit lalu kembali menyala normal hingga penuh. Pada pukul berapa powerbank tersebut terisi penuh 100%?",
+      "pilihan": {
+        "A": "14.30",
+        "B": "15.30",
+        "C": "15.00",
+        "D": "16.00"
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "C18",
+      "kategori": "cerita",
+      "pertanyaan": "Di sebuah kelas terdapat 30 mahasiswa. Sebanyak 18 mahasiswa mengikuti UKM robotik, 12 mahasiswa mengikuti UKM fotografi, dan 5 mahasiswa tidak mengikuti kedua UKM tersebut. Berapa mahasiswa yang mengikuti kedua UKM sekaligus?",
+      "pilihan": {
+        "A": "3 orang",
+        "B": "7 orang",
+        "C": "10 orang",
+        "D": "5 orang"
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "N01",
+      "kategori": "numerikal",
+      "pertanyaan": "Lanjutkan pola deret angka berikut: 4, 9, 16, 25, 36, ...",
+      "pilihan": {
+        "A": "43",
+        "B": "45",
+        "C": "47",
+        "D": "49"
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "N02",
+      "kategori": "numerikal",
+      "pertanyaan": "Hitung hasil dari operasi berikut: 24 + 16 ÷ 4 × 3 − 6 = ...",
+      "pilihan": {
+        "A": "30",
+        "B": "34",
+        "C": "36",
+        "D": "42"
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "N03",
+      "kategori": "numerikal",
+      "pertanyaan": "Lanjutkan pola deret angka berikut: 3, 6, 11, 18, 27, ...",
+      "pilihan": {
+        "A": "34",
+        "B": "36",
+        "C": "38",
+        "D": "40"
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "N04",
+      "kategori": "numerikal",
+      "pertanyaan": "Harga sebuah jaket adalah Rp240.000 dan sedang mendapat diskon 25%. Berapakah harga jaket setelah didiskon?",
+      "pilihan": {
+        "A": "Rp160.000",
+        "B": "Rp175.000",
+        "C": "Rp180.000",
+        "D": "Rp190.000"
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "N05",
+      "kategori": "numerikal",
+      "pertanyaan": "Lanjutkan pola deret angka berikut: 80, 75, 65, 50, 30, ...",
+      "pilihan": {
+        "A": "0",
+        "B": "5",
+        "C": "10",
+        "D": "15"
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "N06",
+      "kategori": "numerikal",
+      "pertanyaan": "Jika 3x + 7 = 28, berapakah nilai dari 2x + 5?",
+      "pilihan": {
+        "A": "19",
+        "B": "21",
+        "C": "23",
+        "D": "25"
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "N07",
+      "kategori": "numerikal",
+      "pertanyaan": "Lanjutkan pola deret angka berikut: 2, 5, 4, 10, 8, 15, 16, ...",
+      "pilihan": {
+        "A": "18",
+        "B": "20",
+        "C": "24",
+        "D": "32"
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "N08",
+      "kategori": "numerikal",
+      "pertanyaan": "Rata-rata nilai 4 mahasiswa adalah 75. Setelah 1 mahasiswa baru bergabung, rata-ratanya naik menjadi 78. Berapakah nilai mahasiswa yang baru bergabung?",
+      "pilihan": {
+        "A": "84",
+        "B": "86",
+        "C": "88",
+        "D": "90"
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "N09",
+      "kategori": "numerikal",
+      "pertanyaan": "Hitung hasil dari operasi berikut: (15 × 4) − (48 ÷ 6) + 12 = ...",
+      "pilihan": {
+        "A": "62",
+        "B": "64",
+        "C": "66",
+        "D": "68"
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "N10",
+      "kategori": "numerikal",
+      "pertanyaan": "Sebuah sepeda motor melaju dengan kecepatan tetap 60 km/jam. Berapa jarak yang ditempuh motor tersebut dalam waktu 45 menit?",
+      "pilihan": {
+        "A": "35 km",
+        "B": "40 km",
+        "C": "45 km",
+        "D": "50 km"
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "N11",
+      "kategori": "numerikal",
+      "pertanyaan": "Lanjutkan pola deret angka berikut: 5, 7, 11, 17, 25, ...",
+      "pilihan": {
+        "A": "29",
+        "B": "31",
+        "C": "33",
+        "D": "35"
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "N12",
+      "kategori": "numerikal",
+      "pertanyaan": "Perbandingan uang Rudi dan Sinta adalah 3 : 5. Jika jumlah uang mereka berdua adalah Rp160.000, berapakah uang milik Sinta?",
+      "pilihan": {
+        "A": "Rp100.000",
+        "B": "Rp110.000",
+        "C": "Rp120.000",
+        "D": "Rp130.000"
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "N13",
+      "kategori": "numerikal",
+      "pertanyaan": "Nilai ujian seorang mahasiswa naik dari 60 menjadi 75. Berapa persen kenaikan nilai tersebut dari nilai awalnya?",
+      "pilihan": {
+        "A": "15%",
+        "B": "20%",
+        "C": "25%",
+        "D": "30%"
+      },
+      "kunci": "C"
+    },
+    {
+      "id": "N14",
+      "kategori": "numerikal",
+      "pertanyaan": "Lanjutkan pola deret angka berikut: 1, 2, 4, 7, 11, 16, ...",
+      "pilihan": {
+        "A": "20",
+        "B": "22",
+        "C": "24",
+        "D": "26"
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "N15",
+      "kategori": "numerikal",
+      "pertanyaan": "Sebuah mesin cetak dapat mencetak 120 lembar kertas dalam 3 menit. Dengan kecepatan yang sama, berapa lembar yang tercetak dalam 7 menit?",
+      "pilihan": {
+        "A": "220 lembar",
+        "B": "240 lembar",
+        "C": "260 lembar",
+        "D": "280 lembar"
+      },
+      "kunci": "D"
+    },
+    {
+      "id": "N16",
+      "kategori": "numerikal",
+      "pertanyaan": "Hitung hasil dari operasi berikut: 125 − 35 × 2 + 15 = ...",
+      "pilihan": {
+        "A": "70",
+        "B": "80",
+        "C": "110",
+        "D": "195"
+      },
+      "kunci": "A"
+    },
+    {
+      "id": "N17",
+      "kategori": "numerikal",
+      "pertanyaan": "Jika 40% dari sebuah bilangan adalah 36, berapakah 50% dari bilangan tersebut?",
+      "pilihan": {
+        "A": "40",
+        "B": "45",
+        "C": "48",
+        "D": "54"
+      },
+      "kunci": "B"
+    },
+    {
+      "id": "N18",
+      "kategori": "numerikal",
+      "pertanyaan": "Lanjutkan pola deret angka berikut: 100, 96, 88, 76, 60, ...",
+      "pilihan": {
+        "A": "32",
+        "B": "36",
+        "C": "38",
+        "D": "40"
+      },
+      "kunci": "D"
+    }
+  ]
+}
