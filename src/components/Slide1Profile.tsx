@@ -119,8 +119,8 @@ export function Slide1Profile({ onNext }: Slide1ProfileProps) {
         {/* Row 1: Nama & Umur */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-2 flex items-center gap-2 text-[15px] font-bold text-[#18383B]">
-              <User className="h-4 w-4 text-[#1C3D40]" />
+            <label className="mb-2 flex items-center gap-2 text-[15px] font-bold text-[#1A2B42]">
+              <User className="h-4 w-4 text-[#223650]" />
               <span>
                 Nama panggilan / inisial{" "}
                 <span className="font-normal text-[#5A6E70]">(opsional)</span>
@@ -137,8 +137,8 @@ export function Slide1Profile({ onNext }: Slide1ProfileProps) {
           </div>
 
           <div>
-            <label className="mb-2 flex items-center gap-2 text-[15px] font-bold text-[#18383B]">
-              <Calendar className="h-4 w-4 text-[#1C3D40]" />
+            <label className="mb-2 flex items-center gap-2 text-[15px] font-bold text-[#1A2B42]">
+              <Calendar className="h-4 w-4 text-[#223650]" />
               <span>
                 Umur{" "}
                 <span className="font-normal text-[#5A6E70]">(minimal 18 tahun)</span>
@@ -160,8 +160,8 @@ export function Slide1Profile({ onNext }: Slide1ProfileProps) {
         {/* Row 2: Gender & Status Pendidikan */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <span className="mb-2 flex items-center gap-2 text-[15px] font-bold text-[#18383B]">
-              <Users className="h-4 w-4 text-[#1C3D40]" />
+            <span className="mb-2 flex items-center gap-2 text-[15px] font-bold text-[#1A2B42]">
+              <Users className="h-4 w-4 text-[#223650]" />
               <span>Jenis kelamin</span>
             </span>
             <div className="grid grid-cols-3 gap-2">
@@ -186,8 +186,8 @@ export function Slide1Profile({ onNext }: Slide1ProfileProps) {
           </div>
 
           <div>
-            <span className="mb-2 flex items-center gap-2 text-[15px] font-bold text-[#18383B]">
-              <GraduationCap className="h-4 w-4 text-[#1C3D40]" />
+            <span className="mb-2 flex items-center gap-2 text-[15px] font-bold text-[#1A2B42]">
+              <GraduationCap className="h-4 w-4 text-[#223650]" />
               <span>Status pendidikan</span>
             </span>
             <div className="grid grid-cols-3 gap-2">
@@ -215,8 +215,8 @@ export function Slide1Profile({ onNext }: Slide1ProfileProps) {
         {/* Row 3: Kebiasaan Belajar & Perangkat Audio */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <span className="mb-2 flex items-center gap-2 text-[15px] font-bold text-[#18383B]">
-              <BookOpen className="h-4 w-4 text-[#1C3D40]" />
+            <span className="mb-2 flex items-center gap-2 text-[15px] font-bold text-[#1A2B42]">
+              <BookOpen className="h-4 w-4 text-[#223650]" />
               <span>Kebiasaan belajar</span>
             </span>
             <div className="grid grid-cols-4 gap-2">
@@ -249,9 +249,9 @@ export function Slide1Profile({ onNext }: Slide1ProfileProps) {
           </div>
 
           <div>
-            <span className="mb-2 flex items-center gap-2 text-[15px] font-bold text-[#18383B]">
-              <Headphones className="h-4 w-4 text-[#1C3D40]" />
-              <span>Perangkat audio</span>
+            <span className="mb-2 flex items-center gap-2 text-[15px] font-bold text-[#1A2B42]">
+              <Headphones className="h-4 w-4 text-[#223650]" />
+              <span>Perangkat audio yang dipakai</span>
             </span>
             <div className="grid grid-cols-2 gap-2.5">
               {(
@@ -288,7 +288,7 @@ export function Slide1Profile({ onNext }: Slide1ProfileProps) {
               <AudioLines className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-[15.5px] font-bold text-[#18383B]">
+              <div className="text-[15.5px] font-bold text-[#1A2B42]">
                 Tes Suara{" "}
                 <span className="text-xs font-normal text-[#5A6E70]">(opsional)</span>
               </div>
@@ -316,7 +316,7 @@ export function Slide1Profile({ onNext }: Slide1ProfileProps) {
 
         {/* Row 5: Consent & CTA */}
         <div className="flex flex-col items-start justify-between gap-4 pt-1 sm:flex-row sm:items-center">
-          <label className="flex cursor-pointer items-center gap-3 text-[14.5px] text-[#263E40]">
+          <label className="flex cursor-pointer items-center gap-3 text-[14.5px] text-[#243447]">
             <button
               type="button"
               role="checkbox"
@@ -338,7 +338,7 @@ export function Slide1Profile({ onNext }: Slide1ProfileProps) {
 
           <button
             type="submit"
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#178573] to-[#0E5E52] px-7 text-[15.5px] font-bold text-white shadow-[0_4px_12px_rgba(13,92,80,0.28)] transition hover:brightness-105 active:scale-[0.99]"
+            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#326296] to-[#1D3E63] px-7 text-[15.5px] font-bold text-white shadow-[0_4px_12px_rgba(24,52,84,0.28)] transition hover:brightness-105 active:scale-[0.99]"
           >
             <span>Lanjut ke Tes 1</span>
             <ArrowRight className="h-4 w-4" />

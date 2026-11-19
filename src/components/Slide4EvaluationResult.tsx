@@ -100,13 +100,13 @@ export function Slide4EvaluationResult({
               <span className="text-5xl font-bold tabular-nums text-jade-700">
                 {lockedResult.skor_instrumental.toFixed(2)}
               </span>
-              <span className="text-base font-semibold text-[#2E5E54]">/ 100 poin</span>
+              <span className="text-base font-semibold text-[#2E4F75]">/ 100 poin</span>
             </div>
-            <div className="mt-3 text-sm text-[#1E4E45]">
+            <div className="mt-3 text-sm text-[#1C3859]">
               Benar: <strong>{lockedResult.benar_instrumental}/9</strong> soal • Rata-rata jawab:{" "}
               <strong>{(lockedResult.waktu_rata_instr_ms / 1000).toFixed(1)} detik</strong>
             </div>
-            <div className="mt-1 truncate text-xs text-[#3A685E]">
+            <div className="mt-1 truncate text-xs text-[#3B5E85]">
               Lagu: {lockedResult.lagu_instrumental_judul}
             </div>
           </div>
@@ -133,7 +133,7 @@ export function Slide4EvaluationResult({
 
         {/* Personalized Insight Card */}
         <div className="rounded-xl border border-[#D5CBB8] bg-[#F5EFE0] p-5">
-          <h3 className="text-base font-bold text-[#18383B]">
+          <h3 className="text-base font-bold text-[#1A2B42]">
             Analisis Singkat Performa Kognitifmu (Selisih:{" "}
             {lockedResult.selisih_skor >= 0 ? "+" : ""}
             {lockedResult.selisih_skor.toFixed(2)} Poin)
@@ -175,7 +175,7 @@ export function Slide4EvaluationResult({
           <button
             type="button"
             onClick={() => handleCopy("link")}
-            className="inline-flex h-12 items-center gap-2 rounded-full bg-gradient-to-br from-[#178573] to-[#0E5E52] px-6 text-[14.5px] font-bold text-white shadow-[0_4px_12px_rgba(13,92,80,0.28)] transition hover:brightness-105"
+            className="inline-flex h-12 items-center gap-2 rounded-full bg-gradient-to-br from-[#326296] to-[#1D3E63] px-6 text-[14.5px] font-bold text-white shadow-[0_4px_12px_rgba(24,52,84,0.28)] transition hover:brightness-105"
           >
             {copiedType === "link" ? (
               <Check className="h-4 w-4" />
@@ -213,7 +213,7 @@ export function Slide4EvaluationResult({
         {/* Slider 1: Instrumental */}
         <div className="rounded-xl border border-[#DDD3BE] bg-parchment-200 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <label className="text-[15px] font-bold text-[#18383B]">
+            <label className="text-[15px] font-bold text-[#1A2B42]">
               1. Menurutmu, musik INSTRUMENTAL tadi memengaruhi fokusmu?
             </label>
             <span
@@ -247,7 +247,7 @@ export function Slide4EvaluationResult({
         {/* Slider 2: Berlirik */}
         <div className="rounded-xl border border-[#DDD3BE] bg-parchment-200 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <label className="text-[15px] font-bold text-[#18383B]">
+            <label className="text-[15px] font-bold text-[#1A2B42]">
               2. Menurutmu, musik BERLIRIK tadi memengaruhi fokusmu?
             </label>
             <span
@@ -280,7 +280,7 @@ export function Slide4EvaluationResult({
 
         {/* Cek Kejujuran */}
         <div>
-          <span className="mb-2.5 block text-[15px] font-bold text-[#18383B]">
+          <span className="mb-2.5 block text-[15px] font-bold text-[#1A2B42]">
             3. Jujur ya (tidak memengaruhi skormu): selama tes tadi, apakah suara musik
             terdengar jelas dan kamu mengerjakan dengan fokus?
           </span>
@@ -330,7 +330,7 @@ export function Slide4EvaluationResult({
                 statusValidDiri: statusValid,
               })
             }
-            className="inline-flex h-12 items-center gap-2 rounded-full bg-gradient-to-br from-[#178573] to-[#0E5E52] px-8 text-[15.5px] font-bold text-white shadow-[0_4px_12px_rgba(13,92,80,0.28)] transition hover:brightness-105 disabled:opacity-60"
+            className="inline-flex h-12 items-center gap-2 rounded-full bg-gradient-to-br from-[#326296] to-[#1D3E63] px-8 text-[15.5px] font-bold text-white shadow-[0_4px_12px_rgba(24,52,84,0.28)] transition hover:brightness-105 disabled:opacity-60"
           >
             {isSubmitting ? (
               <>

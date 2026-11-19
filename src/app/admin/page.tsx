@@ -146,7 +146,7 @@ export default function AdminExportPage() {
 
             <div className="overflow-x-auto rounded-xl border border-[#DDD3BE] bg-[#FBF8F0]">
               <table className="min-w-full divide-y divide-[#E6DEC8] text-left text-xs">
-                <thead className="bg-parchment-300 font-bold text-[#18383B]">
+                <thead className="bg-parchment-300 font-bold text-[#1A2B42]">
                   <tr>
                     <th className="px-3 py-3">ID</th>
                     <th className="px-3 py-3">Inisial / Umur</th>

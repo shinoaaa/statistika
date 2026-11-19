@@ -9,22 +9,23 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Palet utama: Shanshui Indigo / Porcelain Slate-Blue
         jade: {
-          50: "#E3F4F0",
-          100: "#C4EFE2",
-          400: "#45A38E",
-          600: "#157A68",
-          700: "#0E7A68",
-          800: "#0F5E50",
-          900: "#16383C",
+          50: "#EBF2FA",
+          100: "#D4E4F5",
+          400: "#5D89B8",
+          600: "#2D598A",
+          700: "#244B78",
+          800: "#1B3A5E",
+          900: "#16273D",
         },
         parchment: {
-          50: "#FDF9F0",
-          100: "#F7EFE1",
-          200: "#F4EFE2",
-          300: "#EFE6D2",
-          border: "#B88E4F",
-          hairline: "#DFC696",
+          50: "#FDFBF6",
+          100: "#F7F3EA",
+          200: "#F3EFE5",
+          300: "#ECE5D6",
+          border: "#B89258",
+          hairline: "#DEC99E",
         },
       },
       fontFamily: {

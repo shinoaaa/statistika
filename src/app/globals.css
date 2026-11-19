@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 body {
-  color: #16383c;
-  background-color: #f7eedf;
+  color: #16273d;
+  background-color: #eef1f5;
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }

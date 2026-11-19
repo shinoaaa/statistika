@@ -100,7 +100,7 @@ function AudioSeekPlayer({
       className={
         compact
           ? "space-y-2.5"
-          : "mt-3 rounded-xl border border-jade-600/40 bg-[#F3FAF7] p-3.5 shadow-sm"
+          : "mt-3 rounded-xl border border-jade-600/40 bg-[#F2F7FC] p-3.5 shadow-sm"
       }
     >
       <div className="flex items-center justify-between gap-3">
@@ -108,7 +108,7 @@ function AudioSeekPlayer({
           <div className="truncate text-xs font-bold uppercase tracking-wide text-jade-700">
             {isBuffering ? "Memuat lagu..." : isPlaying ? "Sedang diputar" : "Terjeda"}
           </div>
-          <div className="truncate text-[13.5px] font-bold text-[#18383B]">{title}</div>
+          <div className="truncate text-[13.5px] font-bold text-[#1A2B42]">{title}</div>
           {artist && <div className="truncate text-[11.5px] text-[#5A6E70]">{artist}</div>}
         </div>
 
@@ -644,7 +644,7 @@ export function SlideQuizRound({
               type="button"
               disabled={!selectedSong || loadingSongs}
               onClick={handleStartTest}
-              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#178573] to-[#0E5E52] px-6 text-[15.5px] font-bold text-white shadow-[0_4px_12px_rgba(13,92,80,0.28)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#326296] to-[#1D3E63] px-6 text-[15.5px] font-bold text-white shadow-[0_4px_12px_rgba(24,52,84,0.28)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Play className="h-4 w-4 fill-current" />
               <span>Mulai Tes {roundNumber}</span>
@@ -661,7 +661,7 @@ export function SlideQuizRound({
         <div className="lg:col-span-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h3 className="text-lg font-bold text-[#18383B]">
+              <h3 className="text-lg font-bold text-[#1A2B42]">
                 Pilih Lagu ({isInstrumental ? "Khusus Instrumental" : "Khusus Berlirik"})
               </h3>
               <p className="text-xs text-[#5A6E70]">
@@ -816,7 +816,7 @@ export function SlideQuizRound({
                         )}
                       </div>
                       <div className="min-w-0">
-                        <div className="truncate text-[14.5px] font-bold text-[#18383B]">
+                        <div className="truncate text-[14.5px] font-bold text-[#1A2B42]">
                           {track.title}
                         </div>
                         <div className="flex flex-wrap items-center gap-2 text-xs text-[#5A6E70]">
@@ -904,7 +904,7 @@ export function SlideQuizRound({
           <div className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[#DDD3BE] bg-[#FBF8F0] px-3.5 py-2 text-xs text-[#5A6E70]">
             <Clock className="h-3.5 w-3.5 text-[#687879]" />
             <span>Sisa waktu soal:</span>
-            <span className="text-sm font-bold tabular-nums text-[#18383B]">
+            <span className="text-sm font-bold tabular-nums text-[#1A2B42]">
               00:{String(secondsLeft).padStart(2, "0")}
             </span>
           </div>
@@ -942,7 +942,7 @@ export function SlideQuizRound({
       <div className="lg:col-span-8">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-3">
-            <span className="text-base font-bold text-[#18383B]">
+            <span className="text-base font-bold text-[#1A2B42]">
               Soal {String(currentIdx + 1).padStart(2, "0")} dari{" "}
               {String(questions.length).padStart(2, "0")}
             </span>
@@ -963,7 +963,7 @@ export function SlideQuizRound({
                 idx < currentIdx
                   ? "bg-jade-700"
                   : idx === currentIdx
-                  ? "bg-[#17A589]"
+                  ? "bg-[#4A7EB5]"
                   : "bg-[#DFD8C8]"
               }`}
             />
@@ -972,7 +972,7 @@ export function SlideQuizRound({
 
         {/* Question Card */}
         <div className="mt-5 rounded-xl border border-[#D5CBB8] bg-[#F5F0E2] p-5 sm:p-6">
-          <p className="text-[16.5px] font-semibold leading-relaxed text-[#18383B]">
+          <p className="text-[16.5px] font-semibold leading-relaxed text-[#1A2B42]">
             {q.pertanyaan}
           </p>
         </div>
@@ -989,7 +989,7 @@ export function SlideQuizRound({
                 className={`flex w-full items-center gap-4 rounded-[10px] border p-3.5 text-left transition-all ${
                   isSelected
                     ? "border-jade-600 bg-jade-50 font-bold text-jade-800 shadow-sm"
-                    : "border-[#D8D0C1] bg-[#FBF8F0] text-[#263E40] hover:border-jade-600/60 hover:bg-jade-50/40"
+                    : "border-[#D8D0C1] bg-[#FBF8F0] text-[#243447] hover:border-jade-600/60 hover:bg-jade-50/40"
                 }`}
               >
                 <span
