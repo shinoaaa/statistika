@@ -8,6 +8,7 @@ import {
   ParchmentCardShell,
 } from "@/components/OrientBackdrop";
 import { Slide1Profile } from "@/components/Slide1Profile";
+import { PracticeTrial } from "@/components/PracticeTrial";
 import { SlideQuizRound } from "@/components/SlideQuizRound";
 import {
   Slide4EvaluationResult,
@@ -41,6 +42,7 @@ function getOrCreateDeviceId(): string {
 export default function HomePage() {
   const [booting, setBooting] = useState(true);
   const [activeSlide, setActiveSlide] = useState<1 | 2 | 3 | 4>(1);
+  const [isPracticeMode, setIsPracticeMode] = useState(false);
 
   const [deviceId, setDeviceId] = useState("");
   const [urutanKondisi, setUrutanKondisi] = useState<ConditionOrder>("instr_first");
@@ -181,7 +183,19 @@ export default function HomePage() {
             </div>
           ) : (
             <>
-              {activeSlide === 1 && <Slide1Profile onNext={handleCompleteProfile} />}
+              {activeSlide === 1 && (
+                <>
+                  <div className={isPracticeMode ? "hidden" : ""}>
+                    <Slide1Profile
+                      onNext={handleCompleteProfile}
+                      onStartPractice={() => setIsPracticeMode(true)}
+                    />
+                  </div>
+                  {isPracticeMode && (
+                    <PracticeTrial onExit={() => setIsPracticeMode(false)} />
+                  )}
+                </>
+              )}
 
               {activeSlide === 2 && (
                 <SlideQuizRound
@@ -217,7 +231,13 @@ export default function HomePage() {
           )}
         </ParchmentCardShell>
 
-        <BottomStageStepper activeStep={activeSlide} />
+        <BottomStageStepper activeStep={activeSlide} isPractice={isPracticeMode} />
+
+        {(activeSlide === 1 || activeSlide === 4) && !isPracticeMode && (
+          <p className="mt-1 text-center text-[11px] font-medium tracking-wide text-[#243B55]/60">
+            UI Reference: Arkavidia
+          </p>
+        )}
       </div>
     </main>
   );

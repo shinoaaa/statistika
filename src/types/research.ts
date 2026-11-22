@@ -14,6 +14,15 @@ export interface FullQuestion extends PublicQuestion {
   kunci: ChoiceKey;
 }
 
+export interface AnswerReviewItem {
+  questionId: string;
+  pertanyaan: string;
+  pilihan: Record<ChoiceKey, string>;
+  selected: ChoiceKey | null;
+  kunci: ChoiceKey;
+  isCorrect: boolean;
+}
+
 export interface SongTrack {
   id: string;
   title: string;
@@ -30,7 +39,7 @@ export interface SongTrack {
 export interface ProfileData {
   inisial: string;
   umur: number;
-  gender: "Laki-laki" | "Perempuan" | "Tidak menjawab";
+  gender: "Laki-laki" | "Perempuan";
   status_pendidikan: "D3 / D4 / S1" | "S2 / S3" | "Umum / Pekerja";
   kebiasaan_belajar: "Tanpa musik" | "Instrumental" | "Musik berlirik" | "Tergantung suasana";
   perangkat_audio: "Headset / TWS" | "Speaker perangkat";

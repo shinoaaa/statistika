@@ -239,7 +239,13 @@ export function ParchmentCardShell({ children }: { children: React.ReactNode }) 
   );
 }
 
-export function BottomStageStepper({ activeStep }: { activeStep: 1 | 2 | 3 | 4 }) {
+export function BottomStageStepper({
+  activeStep,
+  isPractice = false,
+}: {
+  activeStep: 1 | 2 | 3 | 4;
+  isPractice?: boolean;
+}) {
   const steps = [1, 2, 3, 4] as const;
 
   return (
@@ -250,16 +256,23 @@ export function BottomStageStepper({ activeStep }: { activeStep: 1 | 2 | 3 | 4 }
       {steps.map((step, idx) => {
         const isActive = step === activeStep;
         const isDone = step < activeStep;
+        const isPracticeActive = isActive && isPractice;
 
         return (
           <React.Fragment key={step}>
             <div className="relative flex items-center justify-center">
               {isActive && (
-                <span className="absolute -inset-1.5 rounded-full border border-jade-700/40" />
+                <span
+                  className={`absolute -inset-1.5 rounded-full border ${
+                    isPracticeActive ? "border-[#B8863B]/55" : "border-jade-700/40"
+                  }`}
+                />
               )}
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-full border-2 font-serif text-[15px] font-bold transition-colors ${
-                  isActive
+                  isPracticeActive
+                    ? "border-[#946828] bg-[#B8863B] text-white shadow-sm"
+                    : isActive
                     ? "border-[#183454] bg-jade-700 text-white shadow-sm"
                     : isDone
                     ? "border-jade-700 bg-jade-50 text-jade-700"

@@ -3,6 +3,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   AlertCircle,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Headphones,
   Loader2,
@@ -12,7 +15,7 @@ import {
   Play,
   RefreshCw,
   Search,
-  Volume2,
+  Send,
   X,
 } from "lucide-react";
 import type {
@@ -23,7 +26,43 @@ import type {
   RoundSubmission,
   SongTrack,
 } from "@/types/research";
-import { MAX_SECONDS_PER_QUESTION } from "@/lib/quiz";
+import { MAX_SECONDS_PER_ROUND } from "@/lib/quiz";
+
+// Registry global audio agar lagu dari Tes 1 dipastikan mati total saat pindah ke Tes 2
+const activeAudioPool = new Set<HTMLAudioElement>();
+let globalAudioEpoch = 0;
+
+function killAudioElement(audio: HTMLAudioElement | null) {
+  if (!audio) return;
+  try {
+    audio.onplaying = null;
+    audio.onplay = null;
+    audio.onpause = null;
+    audio.onended = null;
+    audio.onerror = null;
+    audio.ontimeupdate = null;
+    audio.onloadedmetadata = null;
+    audio.ondurationchange = null;
+    audio.muted = true;
+    audio.volume = 0;
+    audio.pause();
+    audio.src = "";
+    audio.removeAttribute("src");
+    audio.load();
+  } catch {
+    // Abaikan cleanup error
+  } finally {
+    activeAudioPool.delete(audio);
+  }
+}
+
+export function killAllManagedAudio(): number {
+  const nextEpoch = ++globalAudioEpoch;
+  for (const audio of Array.from(activeAudioPool)) {
+    killAudioElement(audio);
+  }
+  return nextEpoch;
+}
 
 interface SlideQuizRoundProps {
   roundNumber: 1 | 2;
@@ -31,6 +70,9 @@ interface SlideQuizRoundProps {
   questions: PublicQuestion[];
   onTabSwitch: () => void;
   onComplete: (result: RoundSubmission) => void;
+  isPractice?: boolean;
+  durationSeconds?: number;
+  onExitPractice?: () => void;
 }
 
 const QUICK_CHIPS: Record<MusicMode, Array<{ label: string; q: string }>> = {
@@ -46,12 +88,15 @@ const QUICK_CHIPS: Record<MusicMode, Array<{ label: string; q: string }>> = {
   ],
   lyrical: [
     { label: "Semua", q: "" },
+    { label: "Indo", q: "indo" },
+    { label: "Barat", q: "barat" },
     { label: "Pop", q: "pop" },
     { label: "Indie", q: "indie" },
+    { label: "Rock", q: "rock" },
+    { label: "Hindia & .Feast", q: "feast" },
+    { label: "Coldplay", q: "coldplay" },
+    { label: "Dewa 19", q: "dewa 19" },
     { label: "Tulus", q: "tulus" },
-    { label: "Nadin Amizah", q: "nadin" },
-    { label: "Hindia", q: "hindia" },
-    { label: "Akustik", q: "acoustic" },
   ],
 };
 
@@ -60,6 +105,13 @@ function formatDuration(sec: number): string {
   const m = Math.floor(safe / 60);
   const s = safe % 60;
   return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+function formatTimerMmSs(sec: number): string {
+  const safe = Number.isFinite(sec) && sec > 0 ? Math.floor(sec) : 0;
+  const m = Math.floor(safe / 60);
+  const s = safe % 60;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
 interface AudioSeekPlayerProps {
@@ -75,6 +127,7 @@ interface AudioSeekPlayerProps {
   onSeekCommit: (sec: number) => void;
   compact?: boolean;
   allowPause?: boolean;
+  showStatusLabel?: boolean;
 }
 
 function AudioSeekPlayer({
@@ -90,6 +143,7 @@ function AudioSeekPlayer({
   onSeekCommit,
   compact = false,
   allowPause = true,
+  showStatusLabel = true,
 }: AudioSeekPlayerProps) {
   const safeDuration = Math.max(1, Math.floor(durationSec || 0));
   const clampedSec = Math.min(Math.max(0, Math.floor(currentSec || 0)), safeDuration);
@@ -99,16 +153,18 @@ function AudioSeekPlayer({
     <div
       className={
         compact
-          ? "space-y-2.5"
+          ? "space-y-2"
           : "mt-3 rounded-xl border border-jade-600/40 bg-[#F2F7FC] p-3.5 shadow-sm"
       }
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-2.5">
         <div className="min-w-0">
-          <div className="truncate text-xs font-bold uppercase tracking-wide text-jade-700">
-            {isBuffering ? "Memuat lagu..." : isPlaying ? "Sedang diputar" : "Terjeda"}
-          </div>
-          <div className="truncate text-[13.5px] font-bold text-[#1A2B42]">{title}</div>
+          {showStatusLabel && (
+            <div className="truncate text-xs font-bold uppercase tracking-wide text-jade-700">
+              {isBuffering ? "Memuat lagu..." : isPlaying ? "Sedang diputar" : "Terjeda"}
+            </div>
+          )}
+          <div className="truncate text-[13px] font-bold text-[#1A2B42]">{title}</div>
           {artist && <div className="truncate text-[11.5px] text-[#5A6E70]">{artist}</div>}
         </div>
 
@@ -117,7 +173,7 @@ function AudioSeekPlayer({
             type="button"
             onClick={onTogglePlayPause}
             aria-label={isPlaying ? "Jeda lagu" : "Putar lagu"}
-            className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-jade-600 bg-jade-50 px-3 text-xs font-bold text-jade-800 transition hover:bg-jade-100/70"
+            className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-jade-600 bg-jade-50 px-2.5 text-xs font-bold text-jade-800 transition hover:bg-jade-100/70"
           >
             {isBuffering ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -131,8 +187,8 @@ function AudioSeekPlayer({
         )}
       </div>
 
-      <div className="flex items-center gap-2.5">
-        <span className="w-10 text-left text-[11px] font-semibold tabular-nums text-[#3B4E50]">
+      <div className="flex items-center gap-2">
+        <span className="w-9 text-left text-[11px] font-semibold tabular-nums text-[#3B4E50]">
           {formatDuration(clampedSec)}
         </span>
         <input
@@ -150,7 +206,7 @@ function AudioSeekPlayer({
           onKeyUp={(e) => onSeekCommit(Number(e.currentTarget.value))}
           className="h-1.5 w-full cursor-pointer accent-jade-700"
         />
-        <span className="w-10 text-right text-[11px] font-semibold tabular-nums text-[#5A6E70]">
+        <span className="w-9 text-right text-[11px] font-semibold tabular-nums text-[#5A6E70]">
           {formatDuration(safeDuration)}
         </span>
       </div>
@@ -164,7 +220,11 @@ export function SlideQuizRound({
   questions,
   onTabSwitch,
   onComplete,
+  isPractice = false,
+  durationSeconds,
+  onExitPractice,
 }: SlideQuizRoundProps) {
+  const effectiveDuration = durationSeconds ?? MAX_SECONDS_PER_ROUND;
   const [phase, setPhase] = useState<"prep" | "active">("prep");
 
   // Song Picker & Unified Audio Player state
@@ -181,24 +241,30 @@ export function SlideQuizRound({
   const [audioDurationSec, setAudioDurationSec] = useState(0);
   const [previewError, setPreviewError] = useState("");
 
-  // Active quiz state
+  // Active exam state (timer universal + navigasi bebas antar nomor soal)
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [secondsLeft, setSecondsLeft] = useState(MAX_SECONDS_PER_QUESTION);
-  const [selectedChoice, setSelectedChoice] = useState<ChoiceKey | null>(null);
+  const [roundSecondsLeft, setRoundSecondsLeft] = useState(effectiveDuration);
+  const [selectedAnswers, setSelectedAnswers] = useState<Array<ChoiceKey | null>>(() =>
+    Array(questions.length).fill(null)
+  );
+  const [confirmSubmitOpen, setConfirmSubmitOpen] = useState(false);
   const [audioPlayed, setAudioPlayed] = useState(false);
   const [audioError, setAudioError] = useState("");
 
-  const answersRef = useRef<QuestionAnswerRecord[]>([]);
-  const questionStartMsRef = useRef<number>(0);
+  const selectedAnswersRef = useRef<Array<ChoiceKey | null>>(Array(questions.length).fill(null));
+  const timeSpentMsRef = useRef<number[]>(Array(questions.length).fill(0));
+  const questionEnteredAtRef = useRef<number>(0);
+  const currentIdxRef = useRef<number>(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const songsRef = useRef<SongTrack[]>([]);
   const defaultSongsRef = useRef<SongTrack[]>([]);
   const phaseRef = useRef<"prep" | "active">("prep");
   const isSeekingRef = useRef(false);
-  const lockedAdvanceRef = useRef(false);
+  const examSubmittedRef = useRef(false);
   const fetchCounterRef = useRef(0);
 
   phaseRef.current = phase;
+  currentIdxRef.current = currentIdx;
 
   const isInstrumental = mode === "instrumental";
 
@@ -217,16 +283,16 @@ export function SlideQuizRound({
       };
       if (reqId !== fetchCounterRef.current) return;
 
-      const list = data.tracks ?? [];
+      const list = (data.tracks ?? []).filter((t) => t.mode === mode);
       setSongs(list);
       songsRef.current = list;
       if (q.trim() === "" || defaultSongsRef.current.length === 0) {
         defaultSongsRef.current = list;
       }
       setFallbackNotice(Boolean(data.fallbackUsed));
-      // Pertahankan lagu yang sudah dipilih atau sedang diputar saat user berpindah filter tab
+      // Pertahankan lagu yang sudah dipilih dari mode yang sama saat user berpindah filter tab
       if (list.length > 0) {
-        setSelectedSong((prev) => prev ?? list[0]);
+        setSelectedSong((prev) => (prev && prev.mode === mode ? prev : list[0]));
       }
     } catch {
       if (reqId !== fetchCounterRef.current) return;
@@ -240,32 +306,18 @@ export function SlideQuizRound({
     }
   };
 
-  const abortAudioElement = (audio: HTMLAudioElement | null) => {
-    if (!audio) return;
-    try {
-      audio.onplaying = null;
-      audio.onplay = null;
-      audio.onpause = null;
-      audio.onended = null;
-      audio.onerror = null;
-      audio.ontimeupdate = null;
-      audio.onloadedmetadata = null;
-      audio.ondurationchange = null;
-      audio.pause();
-      audio.removeAttribute("src");
-      audio.load();
-    } catch {
-      // Abaikan cleanup error
-    }
-  };
-
   useEffect(() => {
-    abortAudioElement(audioRef.current);
+    killAllManagedAudio();
     audioRef.current = null;
+    const emptyAnswers = Array<ChoiceKey | null>(questions.length).fill(null);
+    const emptyTimes = Array<number>(questions.length).fill(0);
     setPhase("prep");
     setCurrentIdx(0);
-    setSecondsLeft(MAX_SECONDS_PER_QUESTION);
-    setSelectedChoice(null);
+    setRoundSecondsLeft(effectiveDuration);
+    setSelectedAnswers(emptyAnswers);
+    selectedAnswersRef.current = [...emptyAnswers];
+    timeSpentMsRef.current = [...emptyTimes];
+    setConfirmSubmitOpen(false);
     setAudioPlayed(false);
     setAudioError("");
     setSelectedSong(null);
@@ -277,14 +329,13 @@ export function SlideQuizRound({
     setSearchQuery("");
     setActiveQuery("");
     setFallbackNotice(false);
-    answersRef.current = [];
     songsRef.current = [];
     defaultSongsRef.current = [];
-    lockedAdvanceRef.current = false;
+    examSubmittedRef.current = false;
     fetchSongs("");
 
     return () => {
-      abortAudioElement(audioRef.current);
+      killAllManagedAudio();
       audioRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -313,19 +364,18 @@ export function SlideQuizRound({
     return () => document.removeEventListener("visibilitychange", handleVisibility);
   }, [phase, onTabSwitch]);
 
-  // Countdown timer per soal saat fase aktif
+  // Timer universal untuk seluruh soal (auto-submit saat mencapai 00:00)
   useEffect(() => {
     if (phase !== "active") return;
-    questionStartMsRef.current = performance.now();
-    setSecondsLeft(MAX_SECONDS_PER_QUESTION);
-    lockedAdvanceRef.current = false;
+    questionEnteredAtRef.current = performance.now();
+    setRoundSecondsLeft(effectiveDuration);
 
     const timer = window.setInterval(() => {
-      setSecondsLeft((prev) => {
+      setRoundSecondsLeft((prev) => {
         if (prev <= 1) {
           window.clearInterval(timer);
-          if (!lockedAdvanceRef.current) {
-            recordAndAdvance(null, true);
+          if (!examSubmittedRef.current) {
+            finishExamRound();
           }
           return 0;
         }
@@ -335,7 +385,7 @@ export function SlideQuizRound({
 
     return () => window.clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, currentIdx]);
+  }, [phase]);
 
   const updateMediaSession = (track: SongTrack) => {
     try {
@@ -351,20 +401,29 @@ export function SlideQuizRound({
     }
   };
 
-  const startTrackPlayback = (track: SongTrack, duringActive = false) => {
-    abortAudioElement(audioRef.current);
+  const startTrackPlayback = (
+    track: SongTrack,
+    duringActive = false,
+    startAtSec = 0
+  ) => {
+    if (track.mode !== mode) return;
+    const myEpoch = killAllManagedAudio();
     audioRef.current = null;
 
     const audio = new Audio(track.streamUrl);
+    activeAudioPool.add(audio);
     audio.loop = false;
     audio.volume = 0.85;
     audioRef.current = audio;
+
+    const safeStartSec = Number.isFinite(startAtSec) && startAtSec > 0 ? startAtSec : 0;
+    let appliedInitialSeek = safeStartSec === 0;
 
     setPlayingTrack(track);
     if (!duringActive) {
       setSelectedSong(track);
     }
-    setAudioCurrentSec(0);
+    setAudioCurrentSec(safeStartSec);
     setAudioDurationSec(track.durationSec);
     setIsBufferingAudio(true);
     setIsPlayingAudio(false);
@@ -372,38 +431,67 @@ export function SlideQuizRound({
     setAudioError("");
     updateMediaSession(track);
 
+    const isStillValid = () =>
+      myEpoch === globalAudioEpoch && audioRef.current === audio;
+
+    const applyStartSeekOnce = () => {
+      if (appliedInitialSeek) return;
+      appliedInitialSeek = true;
+      try {
+        const cap =
+          Number.isFinite(audio.duration) && audio.duration > 1
+            ? Math.min(safeStartSec, audio.duration - 0.5)
+            : safeStartSec;
+        if (cap > 0) {
+          audio.currentTime = cap;
+        }
+      } catch {
+        // Abaikan jika stream belum siap seek
+      }
+    };
+
     audio.onloadedmetadata = () => {
-      if (audioRef.current !== audio) return;
+      if (!isStillValid()) {
+        killAudioElement(audio);
+        return;
+      }
       if (Number.isFinite(audio.duration) && audio.duration > 0) {
         setAudioDurationSec(audio.duration);
       }
+      applyStartSeekOnce();
     };
     audio.ondurationchange = () => {
-      if (audioRef.current !== audio) return;
+      if (!isStillValid()) return;
       if (Number.isFinite(audio.duration) && audio.duration > 0) {
         setAudioDurationSec(audio.duration);
       }
     };
     audio.ontimeupdate = () => {
-      if (audioRef.current !== audio || isSeekingRef.current) return;
+      if (!isStillValid() || isSeekingRef.current) return;
       setAudioCurrentSec(audio.currentTime);
     };
     audio.onplaying = () => {
-      if (audioRef.current !== audio) return;
+      if (!isStillValid()) {
+        killAudioElement(audio);
+        return;
+      }
       setIsBufferingAudio(false);
       setIsPlayingAudio(true);
       setAudioPlayed(true);
     };
     audio.onplay = () => {
-      if (audioRef.current !== audio) return;
+      if (!isStillValid()) {
+        killAudioElement(audio);
+        return;
+      }
       setIsPlayingAudio(true);
     };
     audio.onpause = () => {
-      if (audioRef.current !== audio) return;
+      if (!isStillValid()) return;
       setIsPlayingAudio(false);
     };
     audio.onended = () => {
-      if (audioRef.current !== audio) return;
+      if (!isStillValid()) return;
       const pool =
         songsRef.current.length > 1
           ? songsRef.current
@@ -414,8 +502,8 @@ export function SlideQuizRound({
       if (pool.length > 1) {
         const idx = pool.findIndex((s) => s.id === track.id);
         const nextTrack = pool[(idx >= 0 ? idx + 1 : 0) % pool.length];
-        if (nextTrack && nextTrack.id !== track.id) {
-          startTrackPlayback(nextTrack, phaseRef.current === "active");
+        if (nextTrack && nextTrack.id !== track.id && nextTrack.mode === mode) {
+          startTrackPlayback(nextTrack, phaseRef.current === "active", 0);
           return;
         }
       }
@@ -423,11 +511,11 @@ export function SlideQuizRound({
       // Cadangan jika hanya ada 1 lagu pada daftar: putar ulang lagu tersebut
       audio.currentTime = 0;
       audio.play().catch(() => {
-        if (audioRef.current === audio) setIsPlayingAudio(false);
+        if (isStillValid()) setIsPlayingAudio(false);
       });
     };
     audio.onerror = () => {
-      if (audioRef.current !== audio) return;
+      if (!isStillValid()) return;
       setIsBufferingAudio(false);
       setIsPlayingAudio(false);
       if (duringActive) {
@@ -439,13 +527,20 @@ export function SlideQuizRound({
 
     audio.play().then(
       () => {
-        if (audioRef.current !== audio) return;
+        if (!isStillValid()) {
+          killAudioElement(audio);
+          return;
+        }
+        applyStartSeekOnce();
         setIsBufferingAudio(false);
         setIsPlayingAudio(true);
         setAudioPlayed(true);
       },
       () => {
-        if (audioRef.current !== audio) return;
+        if (!isStillValid()) {
+          killAudioElement(audio);
+          return;
+        }
         setIsBufferingAudio(false);
         setIsPlayingAudio(false);
         if (duringActive) {
@@ -459,25 +554,31 @@ export function SlideQuizRound({
 
   const togglePlayPauseCurrent = () => {
     const audio = audioRef.current;
-    if (!audio || !playingTrack) {
-      if (selectedSong) {
-        startTrackPlayback(selectedSong, phase === "active");
+    if (!audio || !playingTrack || playingTrack.mode !== mode) {
+      if (selectedSong && selectedSong.mode === mode) {
+        startTrackPlayback(selectedSong, phase === "active", 0);
       }
       return;
     }
     if (audio.paused) {
+      const resumeSec =
+        Number.isFinite(audio.currentTime) && audio.currentTime > 0
+          ? audio.currentTime
+          : audioCurrentSec;
       setIsBufferingAudio(true);
       audio.play().then(
         () => {
-          if (audioRef.current !== audio) return;
+          if (audioRef.current !== audio) {
+            killAudioElement(audio);
+            return;
+          }
           setIsBufferingAudio(false);
           setIsPlayingAudio(true);
           setAudioPlayed(true);
         },
         () => {
           if (audioRef.current !== audio) return;
-          setIsBufferingAudio(false);
-          setIsPlayingAudio(false);
+          startTrackPlayback(playingTrack, phase === "active", resumeSec);
         }
       );
     } else if (phase !== "active") {
@@ -492,7 +593,7 @@ export function SlideQuizRound({
       togglePlayPauseCurrent();
       return;
     }
-    startTrackPlayback(track, false);
+    startTrackPlayback(track, false, 0);
   };
 
   const handleSeekStart = () => {
@@ -523,73 +624,122 @@ export function SlideQuizRound({
   };
 
   const handleStartTest = () => {
-    if (!selectedSong) return;
+    if (!selectedSong || selectedSong.mode !== mode) return;
     const chosenTrack = selectedSong;
     setAudioError("");
+    setConfirmSubmitOpen(false);
+    examSubmittedRef.current = false;
 
-    // Jika lagu yang dipilih sudah dimuat/diputar saat memilih lagu, lanjutkan tanpa memutus
-    if (playingTrack?.id === chosenTrack.id && audioRef.current) {
-      if (audioRef.current.paused) {
-        audioRef.current.play().then(
-          () => setAudioPlayed(true),
-          () => setAudioError("Klik Putar pada pemutar audio jika musik belum berbunyi.")
+    const existingAudio = audioRef.current;
+    // Jika lagu yang dipilih sudah dimuat (baik sedang jalan maupun sempat dijeda), lanjutkan dari posisi detiknya
+    if (
+      playingTrack?.id === chosenTrack.id &&
+      playingTrack.mode === mode &&
+      existingAudio &&
+      !existingAudio.error &&
+      existingAudio.src
+    ) {
+      const resumeSec =
+        Number.isFinite(existingAudio.currentTime) && existingAudio.currentTime > 0
+          ? existingAudio.currentTime
+          : audioCurrentSec;
+
+      if (existingAudio.paused) {
+        setIsBufferingAudio(true);
+        existingAudio.play().then(
+          () => {
+            if (audioRef.current !== existingAudio) {
+              killAudioElement(existingAudio);
+              return;
+            }
+            setIsBufferingAudio(false);
+            setIsPlayingAudio(true);
+            setAudioPlayed(true);
+          },
+          () => {
+            if (audioRef.current !== existingAudio) return;
+            // Jika stream sempat putus saat dijeda, muat ulang langsung dari detik terakhir
+            startTrackPlayback(chosenTrack, true, resumeSec);
+          }
         );
       } else {
+        setIsBufferingAudio(false);
+        setIsPlayingAudio(true);
         setAudioPlayed(true);
       }
       setPhase("active");
       return;
     }
 
-    startTrackPlayback(chosenTrack, true);
+    startTrackPlayback(chosenTrack, true, 0);
     setPhase("active");
   };
 
-  const recordAndAdvance = (choice: ChoiceKey | null, timedOut: boolean) => {
-    if (lockedAdvanceRef.current) return;
-    lockedAdvanceRef.current = true;
+  const flushCurrentQuestionTime = () => {
+    if (questionEnteredAtRef.current <= 0) return;
+    const now = performance.now();
+    const delta = Math.max(0, Math.round(now - questionEnteredAtRef.current));
+    const idx = currentIdxRef.current;
+    timeSpentMsRef.current[idx] = (timeSpentMsRef.current[idx] ?? 0) + delta;
+    questionEnteredAtRef.current = now;
+  };
 
-    const currentQ = questions[currentIdx];
-    const elapsedMs = Math.round(performance.now() - questionStartMsRef.current);
-
-    answersRef.current = [
-      ...answersRef.current,
-      {
-        questionId: currentQ.id,
-        kategori: currentQ.kategori,
-        selected: choice,
-        responseTimeMs: timedOut ? MAX_SECONDS_PER_QUESTION * 1000 : elapsedMs,
-        timedOut,
-      },
-    ];
-
-    const nextIdx = currentIdx + 1;
-    if (nextIdx >= questions.length) {
-      const audioEl = audioRef.current;
-      const playedOk =
-        audioPlayed || Boolean(audioEl && !audioEl.paused && audioEl.currentTime > 0);
-      abortAudioElement(audioEl);
-      audioRef.current = null;
-      onComplete({
-        mode,
-        songId: selectedSong?.id || "unknown",
-        songTitle: selectedSong?.title || "Unknown Track",
-        audioPlayed: playedOk,
-        answers: answersRef.current,
-      });
-      return;
-    }
-
-    setTimeout(() => {
-      setSelectedChoice(null);
-      setCurrentIdx(nextIdx);
-    }, timedOut ? 0 : 180);
+  const handleJumpToQuestion = (targetIdx: number) => {
+    if (targetIdx < 0 || targetIdx >= questions.length || targetIdx === currentIdx) return;
+    flushCurrentQuestionTime();
+    setConfirmSubmitOpen(false);
+    setCurrentIdx(targetIdx);
   };
 
   const handleSelectOption = (choice: ChoiceKey) => {
-    if (lockedAdvanceRef.current) return;
-    setSelectedChoice(choice);
-    recordAndAdvance(choice, false);
+    if (examSubmittedRef.current) return;
+    setSelectedAnswers((prev) => {
+      const next = [...prev];
+      next[currentIdx] = choice;
+      selectedAnswersRef.current = next;
+      return next;
+    });
+  };
+
+  const finishExamRound = () => {
+    if (examSubmittedRef.current) return;
+    examSubmittedRef.current = true;
+    flushCurrentQuestionTime();
+
+    const audioEl = audioRef.current;
+    const playedOk =
+      audioPlayed || Boolean(audioEl && !audioEl.paused && audioEl.currentTime > 0);
+    killAllManagedAudio();
+    audioRef.current = null;
+
+    const records: QuestionAnswerRecord[] = questions.map((item, idx) => {
+      const selected = selectedAnswersRef.current[idx] ?? null;
+      return {
+        questionId: item.id,
+        kategori: item.kategori,
+        selected,
+        responseTimeMs: Math.max(0, timeSpentMsRef.current[idx] ?? 0),
+        timedOut: selected === null,
+      };
+    });
+
+    onComplete({
+      mode,
+      songId: selectedSong?.id || "unknown",
+      songTitle: selectedSong?.title || "Unknown Track",
+      audioPlayed: playedOk,
+      answers: records,
+    });
+  };
+
+  const answeredCount = selectedAnswers.filter((a) => a !== null).length;
+
+  const handleRequestSubmit = () => {
+    if (answeredCount < questions.length) {
+      setConfirmSubmitOpen(true);
+      return;
+    }
+    finishExamRound();
   };
 
   // =========================================================================
@@ -601,6 +751,21 @@ export function SlideQuizRound({
         {/* Left Briefing Column */}
         <div className="flex flex-col justify-between border-b border-[#E6DEC8] pb-6 lg:col-span-4 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
           <div>
+            {isPractice && onExitPractice && (
+              <button
+                type="button"
+                onClick={() => {
+                  killAllManagedAudio();
+                  audioRef.current = null;
+                  onExitPractice();
+                }}
+                className="mb-3 inline-flex items-center gap-1.5 rounded-lg border border-[#D5CEBF] bg-[#FBF8F0] px-3 py-1.5 text-xs font-bold text-[#3B4E50] transition hover:border-jade-600/60 hover:text-jade-800"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                <span>Kembali ke Menu Utama</span>
+              </button>
+            )}
+
             <span
               className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-xs font-bold ${
                 isInstrumental
@@ -613,11 +778,14 @@ export function SlideQuizRound({
               ) : (
                 <Music2 className="h-3.5 w-3.5" />
               )}
-              TES 0{roundNumber} • {isInstrumental ? "INSTRUMENTAL" : "MUSIK BERLIRIK"}
+              {isPractice ? `COBA TES 0${roundNumber}` : `TES 0${roundNumber}`} •{" "}
+              {isInstrumental ? "INSTRUMENTAL" : "MUSIK BERLIRIK"}
             </span>
 
             <h2 className="mt-4 text-2xl font-bold text-jade-900">
-              {roundNumber === 1
+              {isPractice
+                ? `Pilih Lagu & Coba Tes ${roundNumber}`
+                : roundNumber === 1
                 ? "Pilih Lagu & Mulai Tes 1"
                 : "Pilih Lagu & Mulai Tes 2"}
             </h2>
@@ -628,26 +796,37 @@ export function SlideQuizRound({
             </p>
 
             <div className="mt-5 space-y-2 rounded-xl border border-dashed border-jade-600/60 bg-[#FBF8F0] p-4 text-[13.5px] text-[#2E4345]">
-              <div className="font-bold text-jade-800">Ketentuan Tes {roundNumber}:</div>
-              <p>• 9 soal pilihan ganda acak.</p>
-              <p>• Batas waktu maksimal {MAX_SECONDS_PER_QUESTION} detik per soal.</p>
+              <div className="font-bold text-jade-800">
+                {isPractice ? `Simulasi Coba Tes ${roundNumber}:` : `Ketentuan Tes ${roundNumber}:`}
+              </div>
+              <p>
+                • {questions.length} soal pilihan ganda{isPractice ? " latihan (tidak disimpan ke data riset)" : ""}, bebas berpindah antar nomor soal.
+              </p>
+              <p>
+                • Batas waktu total {formatTimerMmSs(effectiveDuration)} untuk seluruh{" "}
+                {questions.length} soal.
+              </p>
               <p>
                 • Musik tidak dapat dijeda atau dimatikan saat tes sudah berjalan, dan
                 akan lanjut ke lagu lain bila selesai.
               </p>
-              <p>• Jangan me-refresh halaman sebelum seluruh tes selesai.</p>
+              <p>
+                {isPractice
+                  ? "• Kamu bebas kembali ke menu utama kapan saja."
+                  : "• Jangan me-refresh halaman sebelum seluruh tes selesai."}
+              </p>
             </div>
           </div>
 
           <div className="mt-6">
             <button
               type="button"
-              disabled={!selectedSong || loadingSongs}
+              disabled={!selectedSong || selectedSong.mode !== mode || loadingSongs}
               onClick={handleStartTest}
               className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#326296] to-[#1D3E63] px-6 text-[15.5px] font-bold text-white shadow-[0_4px_12px_rgba(24,52,84,0.28)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Play className="h-4 w-4 fill-current" />
-              <span>Mulai Tes {roundNumber}</span>
+              <span>{isPractice ? `Mulai Coba Tes ${roundNumber}` : `Mulai Tes ${roundNumber}`}</span>
             </button>
             {selectedSong && (
               <p className="mt-2 truncate text-center text-xs text-[#4B6062]">
@@ -689,7 +868,7 @@ export function SlideQuizRound({
                   placeholder={
                     isInstrumental
                       ? "Cari Genshin, piano, lofi, anime..."
-                      : "Cari Tulus, Hindia, pop..."
+                      : "Cari The 1975, Hindia, Arctic Monkeys..."
                   }
                   className="h-10 w-48 rounded-lg border border-[#D5CEBF] bg-[#F4F1E8] pl-9 pr-8 text-sm text-jade-900 placeholder:text-[#8C9694] focus:border-jade-600 focus:outline-none sm:w-60"
                 />
@@ -877,15 +1056,33 @@ export function SlideQuizRound({
   }
 
   // =========================================================================
-  // STATE B (DI DALAM SLIDE YANG SAMA): 9 SOAL TES AKTIF
+  // STATE B (DI DALAM SLIDE YANG SAMA): 9 SOAL TES AKTIF (MODE UJIAN 03:00)
   // =========================================================================
   const q = questions[currentIdx];
+  const currentSelected = selectedAnswers[currentIdx] ?? null;
+  const activeDisplayTrack = playingTrack ?? selectedSong;
+  const unansweredCount = questions.length - answeredCount;
 
   return (
     <div className="grid grid-cols-1 gap-7 lg:grid-cols-12 lg:gap-8">
-      {/* Left Active Test Info, Countdown & Audio Player */}
-      <div className="flex flex-col justify-between border-b border-[#E6DEC8] pb-5 lg:col-span-4 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
+      {/* Left Panel: Navigasi Nomor Soal (1-9), Submit & Pemutar Audio Ringkas */}
+      <div className="flex flex-col justify-between gap-5 border-b border-[#E6DEC8] pb-5 lg:col-span-4 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
         <div>
+          {isPractice && onExitPractice && (
+            <button
+              type="button"
+              onClick={() => {
+                killAllManagedAudio();
+                audioRef.current = null;
+                onExitPractice();
+              }}
+              className="mb-3 inline-flex items-center gap-1.5 rounded-lg border border-[#D5CEBF] bg-[#FBF8F0] px-3 py-1.5 text-xs font-bold text-[#3B4E50] transition hover:border-jade-600/60 hover:text-jade-800"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Kembali ke Menu Utama</span>
+            </button>
+          )}
+
           <span
             className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-xs font-bold ${
               isInstrumental
@@ -893,118 +1090,217 @@ export function SlideQuizRound({
                 : "border-[#B68D4C] bg-parchment-300 text-[#7D5A24]"
             }`}
           >
-            TES 0{roundNumber} • AKTIF
+            {isPractice ? `COBA TES 0${roundNumber} • SIMULASI` : `TES 0${roundNumber} • AKTIF`}
           </span>
 
-          <h2 className="mt-4 text-2xl font-bold text-jade-900">
+          <h2 className="mt-3 text-2xl font-bold text-jade-900">
             {isInstrumental ? "Musik Instrumental" : "Musik Berlirik"}
           </h2>
 
-          {/* Compact Non-Distracting Numeric Timer (tanpa garis/bar waktu mundur) */}
-          <div className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[#DDD3BE] bg-[#FBF8F0] px-3.5 py-2 text-xs text-[#5A6E70]">
-            <Clock className="h-3.5 w-3.5 text-[#687879]" />
-            <span>Sisa waktu soal:</span>
-            <span className="text-sm font-bold tabular-nums text-[#1A2B42]">
-              00:{String(secondsLeft).padStart(2, "0")}
-            </span>
+          {/* Navigasi Nomor Soal 3x3 + Timer Ringkas */}
+          <div className="mt-4 rounded-xl border border-[#DDD3BE] bg-[#FBF8F0] p-4">
+            <div className="text-xs font-bold text-[#1A2B42]">Navigasi Soal</div>
+
+            <div className="mt-3 flex items-stretch gap-3.5">
+              {/* Grid 3 x 3 Lingkaran Nomor Soal (1-9) */}
+              <div className="grid shrink-0 grid-cols-3 gap-2">
+                {questions.map((item, idx) => {
+                  const isCurrent = idx === currentIdx;
+                  const isAnswered = selectedAnswers[idx] !== null;
+
+                  let circleCls =
+                    "border border-[#CFC6B4] bg-[#FDFBF6] text-[#45566B] hover:border-jade-600/70";
+                  if (isCurrent && isAnswered) {
+                    circleCls =
+                      "border-2 border-jade-900 bg-jade-700 text-white ring-2 ring-jade-600/30";
+                  } else if (isCurrent) {
+                    circleCls =
+                      "border-2 border-jade-700 bg-jade-50 text-jade-800 ring-2 ring-jade-600/25";
+                  } else if (isAnswered) {
+                    circleCls =
+                      "border border-jade-700 bg-jade-700 text-white hover:brightness-105";
+                  }
+
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => handleJumpToQuestion(idx)}
+                      aria-label={`Pindah ke soal ${idx + 1}${isAnswered ? " (sudah dijawab)" : ""}`}
+                      className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all ${circleCls}`}
+                    >
+                      {idx + 1}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Panel Samping: Sisa Waktu & Status Terjawab */}
+              <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-[#E5DEC9] bg-[#F5F0E2]/70 px-3 py-2.5 text-center">
+                <div className="flex items-center gap-1 text-[11px] font-semibold text-[#5A6E70]">
+                  <Clock className="h-3.5 w-3.5 text-[#687879]" />
+                  <span>Sisa waktu</span>
+                </div>
+                <div className="mt-1 text-xl font-bold tabular-nums tracking-tight text-[#1A2B42]">
+                  {formatTimerMmSs(roundSecondsLeft)}
+                </div>
+                <div className="my-2 h-px w-10 bg-[#DCD3BF]" />
+                <div className="text-xs font-semibold text-[#4B6062]">
+                  {answeredCount}/{questions.length} terjawab
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              {confirmSubmitOpen ? (
+                <div className="rounded-lg border border-[#E8C699] bg-[#FBE5C8]/65 p-3 text-xs text-[#80370B]">
+                  <p className="font-semibold">
+                    Masih ada {unansweredCount} soal belum dijawab. Tetap kumpulkan?
+                  </p>
+                  <div className="mt-2.5 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={finishExamRound}
+                      className="flex-1 rounded-lg bg-jade-700 px-3 py-1.5 font-bold text-white transition hover:brightness-105"
+                    >
+                      Ya, Kumpulkan
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmSubmitOpen(false)}
+                      className="rounded-lg border border-[#D5CEBF] bg-white px-3 py-1.5 font-semibold text-[#3B4E50] hover:bg-[#F7F3E8]"
+                    >
+                      Batal
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleRequestSubmit}
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#326296] to-[#1D3E63] px-5 text-sm font-bold text-white shadow-[0_4px_12px_rgba(24,52,84,0.24)] transition hover:brightness-105"
+                >
+                  <Send className="h-3.5 w-3.5" />
+                  <span>
+                    {isPractice
+                      ? `Selesai Coba Tes ${roundNumber}`
+                      : `Kumpulkan Tes ${roundNumber}`}
+                  </span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="mt-5 rounded-xl border border-[#DDD3BE] bg-[#FBF8F0] p-4">
-          <div className="mb-2 flex items-center gap-2 text-xs font-bold text-jade-800">
-            <Headphones className="h-4 w-4" />
+        {/* Pemutar Audio Ringkas (tanpa label "Sedang Diputar" & tanpa footer panjang) */}
+        <div className="rounded-xl border border-[#DDD3BE] bg-[#FBF8F0] px-3.5 py-3">
+          <div className="mb-1.5 flex items-center gap-1.5 text-[11.5px] font-bold text-jade-800">
+            <Headphones className="h-3.5 w-3.5 shrink-0" />
             <span>Pemutar Audio Tes {roundNumber}</span>
           </div>
-          {(playingTrack ?? selectedSong) && (
+          {activeDisplayTrack && (
             <AudioSeekPlayer
               compact
               allowPause={false}
-              title={(playingTrack ?? selectedSong)!.title}
+              showStatusLabel={false}
+              title={activeDisplayTrack.title}
               isPlaying={isPlayingAudio}
               isBuffering={isBufferingAudio}
               currentSec={audioCurrentSec}
-              durationSec={audioDurationSec || (playingTrack ?? selectedSong)!.durationSec}
+              durationSec={audioDurationSec || activeDisplayTrack.durationSec}
               onTogglePlayPause={togglePlayPauseCurrent}
               onSeekStart={handleSeekStart}
               onSeekPreview={handleSeekPreview}
               onSeekCommit={handleSeekCommit}
             />
           )}
-          <p className="mt-2.5 text-[11.5px] leading-relaxed text-[#5A6E70]">
-            Musik tidak dapat dijeda saat tes berjalan, otomatis pindah lagu jika habis,
-            dan berhenti setelah soal ke-9.
-          </p>
-          {audioError && <p className="mt-1 text-xs font-semibold text-[#C85A17]">{audioError}</p>}
+          {audioError && <p className="mt-1.5 text-xs font-semibold text-[#C85A17]">{audioError}</p>}
         </div>
       </div>
 
-      {/* Right Question & 4 Options */}
-      <div className="lg:col-span-8">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-3">
+      {/* Right Panel: Header Soal + Soal + 4 Pilihan + Prev/Next */}
+      <div className="flex flex-col justify-between lg:col-span-8">
+        <div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-base font-bold text-[#1A2B42]">
               Soal {String(currentIdx + 1).padStart(2, "0")} dari{" "}
               {String(questions.length).padStart(2, "0")}
             </span>
           </div>
 
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-jade-600/40 bg-jade-50 px-3 py-1 text-xs font-bold text-jade-800">
-            <Volume2 className="h-3.5 w-3.5" />
-            {audioPlayed ? "Audio Aktif" : isBufferingAudio ? "Memuat Audio..." : "Audio Siap"}
-          </span>
-        </div>
+          {/* Question Card */}
+          <div className="mt-4 rounded-xl border border-[#D5CBB8] bg-[#F5F0E2] p-5 sm:p-6">
+            <p className="text-[16.5px] font-semibold leading-relaxed text-[#1A2B42]">
+              {q.pertanyaan}
+            </p>
+          </div>
 
-        {/* 9-Segment Progress Bar */}
-        <div className="mt-4 grid grid-cols-9 gap-2">
-          {questions.map((item, idx) => (
-            <div
-              key={item.id}
-              className={`h-2 rounded-full transition-colors ${
-                idx < currentIdx
-                  ? "bg-jade-700"
-                  : idx === currentIdx
-                  ? "bg-[#4A7EB5]"
-                  : "bg-[#DFD8C8]"
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Question Card */}
-        <div className="mt-5 rounded-xl border border-[#D5CBB8] bg-[#F5F0E2] p-5 sm:p-6">
-          <p className="text-[16.5px] font-semibold leading-relaxed text-[#1A2B42]">
-            {q.pertanyaan}
-          </p>
-        </div>
-
-        {/* 4 Option Cards */}
-        <div className="mt-4 space-y-3">
-          {(["A", "B", "C", "D"] as const).map((key) => {
-            const isSelected = selectedChoice === key;
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => handleSelectOption(key)}
-                className={`flex w-full items-center gap-4 rounded-[10px] border p-3.5 text-left transition-all ${
-                  isSelected
-                    ? "border-jade-600 bg-jade-50 font-bold text-jade-800 shadow-sm"
-                    : "border-[#D8D0C1] bg-[#FBF8F0] text-[#243447] hover:border-jade-600/60 hover:bg-jade-50/40"
-                }`}
-              >
-                <span
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm font-bold ${
+          {/* 4 Option Cards */}
+          <div className="mt-4 space-y-3">
+            {(["A", "B", "C", "D"] as const).map((key) => {
+              const isSelected = currentSelected === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => handleSelectOption(key)}
+                  className={`flex w-full items-center gap-4 rounded-[10px] border p-3.5 text-left transition-all ${
                     isSelected
-                      ? "border-jade-700 bg-jade-700 text-white"
-                      : "border-[#BFB5A2] bg-[#EFECE2] text-[#3B4E50]"
+                      ? "border-jade-600 bg-jade-50 font-bold text-jade-800 shadow-sm"
+                      : "border-[#D8D0C1] bg-[#FBF8F0] text-[#243447] hover:border-jade-600/60 hover:bg-jade-50/40"
                   }`}
                 >
-                  {key}
-                </span>
-                <span className="text-[15.5px] leading-snug">{q.pilihan[key]}</span>
-              </button>
-            );
-          })}
+                  <span
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm font-bold ${
+                      isSelected
+                        ? "border-jade-700 bg-jade-700 text-white"
+                        : "border-[#BFB5A2] bg-[#EFECE2] text-[#3B4E50]"
+                    }`}
+                  >
+                    {key}
+                  </span>
+                  <span className="text-[15.5px] leading-snug">{q.pilihan[key]}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Bottom Prev / Next Navigation */}
+        <div className="mt-5 flex items-center justify-between gap-3 pt-1">
+          <button
+            type="button"
+            disabled={currentIdx === 0}
+            onClick={() => handleJumpToQuestion(currentIdx - 1)}
+            className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-[#D5CEBF] bg-[#FBF8F0] px-4 text-sm font-semibold text-[#3B4E50] transition hover:border-jade-600/60 hover:text-jade-800 disabled:cursor-not-allowed disabled:opacity-45"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span>Sebelumnya</span>
+          </button>
+
+          {currentIdx < questions.length - 1 ? (
+            <button
+              type="button"
+              onClick={() => handleJumpToQuestion(currentIdx + 1)}
+              className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-jade-600 bg-jade-50 px-4 text-sm font-bold text-jade-800 transition hover:bg-jade-100/70"
+            >
+              <span>Selanjutnya</span>
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleRequestSubmit}
+              className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-jade-700 px-4 text-sm font-bold text-white transition hover:brightness-105"
+            >
+              <span>
+                {isPractice
+                  ? `Selesai Coba Tes ${roundNumber}`
+                  : `Kumpulkan Tes ${roundNumber}`}
+              </span>
+              <Send className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       </div>
     </div>

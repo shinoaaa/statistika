@@ -22,9 +22,10 @@ import type { ProfileData } from "@/types/research";
 
 interface Slide1ProfileProps {
   onNext: (profile: ProfileData) => void;
+  onStartPractice: () => void;
 }
 
-export function Slide1Profile({ onNext }: Slide1ProfileProps) {
+export function Slide1Profile({ onNext, onStartPractice }: Slide1ProfileProps) {
   const [inisial, setInisial] = useState("");
   const [umurStr, setUmurStr] = useState("");
   const [gender, setGender] = useState<ProfileData["gender"]>("Laki-laki");
@@ -164,8 +165,8 @@ export function Slide1Profile({ onNext }: Slide1ProfileProps) {
               <Users className="h-4 w-4 text-[#223650]" />
               <span>Jenis kelamin</span>
             </span>
-            <div className="grid grid-cols-3 gap-2">
-              {(["Laki-laki", "Perempuan", "Tidak menjawab"] as const).map((g) => {
+            <div className="grid grid-cols-2 gap-2.5">
+              {(["Laki-laki", "Perempuan"] as const).map((g) => {
                 const active = gender === g;
                 return (
                   <button
@@ -288,10 +289,7 @@ export function Slide1Profile({ onNext }: Slide1ProfileProps) {
               <AudioLines className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-[15.5px] font-bold text-[#1A2B42]">
-                Tes Suara{" "}
-                <span className="text-xs font-normal text-[#5A6E70]">(opsional)</span>
-              </div>
+              <div className="text-[15.5px] font-bold text-[#1A2B42]">Tes Suara</div>
               <p className="text-xs text-[#4B6062]">
                 Coba putar suara jika ingin memastikan perangkat audiomu sudah terdengar.
               </p>
@@ -336,13 +334,27 @@ export function Slide1Profile({ onNext }: Slide1ProfileProps) {
             </span>
           </label>
 
-          <button
-            type="submit"
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#326296] to-[#1D3E63] px-7 text-[15.5px] font-bold text-white shadow-[0_4px_12px_rgba(24,52,84,0.28)] transition hover:brightness-105 active:scale-[0.99]"
-          >
-            <span>Lanjut ke Tes 1</span>
-            <ArrowRight className="h-4 w-4" />
-          </button>
+          <div className="flex shrink-0 flex-wrap items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => {
+                audioRef.current?.pause();
+                setIsPlayingCheck(false);
+                onStartPractice();
+              }}
+              className="inline-flex h-12 items-center justify-center rounded-full border border-jade-600 bg-jade-50 px-5 text-[14.5px] font-bold text-jade-800 shadow-sm transition hover:bg-jade-100/70"
+            >
+              Coba Dulu
+            </button>
+
+            <button
+              type="submit"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#326296] to-[#1D3E63] px-7 text-[15.5px] font-bold text-white shadow-[0_4px_12px_rgba(24,52,84,0.28)] transition hover:brightness-105 active:scale-[0.99]"
+            >
+              <span>Lanjut ke Tes 1</span>
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
     </form>

@@ -125,3 +125,24 @@ export async function listSubmissions(): Promise<{
     return { storage: "local", rows: [] };
   }
 }
+
+export async function deleteSubmission(idResponden: string): Promise<boolean> {
+  if (!idResponden) return false;
+
+  if (isNeonConfigured()) {
+    await ensureNeonSchema();
+    const sql = neon(process.env.DATABASE_URL!);
+    await sql`DELETE FROM responses WHERE id_responden = ${idResponden}`;
+    return true;
+  }
+
+  try {
+    const raw = await fs.readFile(LOCAL_FILE, "utf-8");
+    const list = JSON.parse(raw) as GradedResponseRecord[];
+    const filtered = list.filter((r) => r.id_responden !== idResponden);
+    await fs.writeFile(LOCAL_FILE, JSON.stringify(filtered, null, 2), "utf-8");
+    return filtered.length !== list.length;
+  } catch {
+    return false;
+  }
+}

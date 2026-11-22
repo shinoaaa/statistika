@@ -92,6 +92,8 @@ export async function POST(request: NextRequest) {
         lagu_instrumental_judul: record.lagu_instrumental_judul,
         lagu_berlirik_judul: record.lagu_berlirik_judul,
         persona,
+        review_instrumental: instrGrade.review,
+        review_berlirik: lyricGrade.review,
       },
     });
   } catch (err) {

@@ -1,7 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import { Check, CheckCircle2, Copy, Loader2, Share2, Sparkles } from "lucide-react";
+import {
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  ClipboardList,
+  Heart,
+  Loader2,
+  Share2,
+  Sparkles,
+} from "lucide-react";
+import { AnswerReviewPanel } from "@/components/AnswerReviewPanel";
+import type { AnswerReviewItem } from "@/types/research";
 
 export interface FinalResultSummary {
   id_responden: string;
@@ -20,6 +32,8 @@ export interface FinalResultSummary {
     label: string;
     headline: string;
   };
+  review_instrumental?: AnswerReviewItem[];
+  review_berlirik?: AnswerReviewItem[];
 }
 
 interface Slide4EvaluationResultProps {
@@ -34,9 +48,91 @@ interface Slide4EvaluationResultProps {
 }
 
 function describeEffect(val: number): string {
-  if (val > 0) return `+${val} (Membantu)`;
-  if (val < 0) return `${val} (Mengganggu)`;
+  if (val >= 9) return `+${val} (Sangat membantu)`;
+  if (val >= 5) return `+${val} (Membantu)`;
+  if (val > 0) return `+${val} (Agak membantu)`;
+  if (val <= -9) return `${val} (Sangat mengganggu)`;
+  if (val <= -5) return `${val} (Mengganggu)`;
+  if (val < 0) return `${val} (Agak mengganggu)`;
   return "0 (Netral)";
+}
+
+const PERCEPTION_STEPS = [
+  { val: -10, size: "h-10 w-10 sm:h-11 sm:w-11", side: "neg" as const, label: "Sangat mengganggu (-10)" },
+  { val: -6, size: "h-8 w-8 sm:h-9 sm:w-9", side: "neg" as const, label: "Mengganggu (-6)" },
+  { val: -3, size: "h-7 w-7 sm:h-[30px] sm:w-[30px]", side: "neg" as const, label: "Agak mengganggu (-3)" },
+  { val: 0, size: "h-6 w-6", side: "mid" as const, label: "Netral (0)" },
+  { val: 3, size: "h-7 w-7 sm:h-[30px] sm:w-[30px]", side: "pos" as const, label: "Agak membantu (+3)" },
+  { val: 6, size: "h-8 w-8 sm:h-9 sm:w-9", side: "pos" as const, label: "Membantu (+6)" },
+  { val: 10, size: "h-10 w-10 sm:h-11 sm:w-11", side: "pos" as const, label: "Sangat membantu (+10)" },
+] as const;
+
+function PerceptionCircleScale({
+  value,
+  onChange,
+  ariaLabel,
+}: {
+  value: number;
+  onChange: (nextVal: number) => void;
+  ariaLabel: string;
+}) {
+  return (
+    <div className="mt-4">
+      <div className="flex items-center gap-3 sm:gap-4" role="radiogroup" aria-label={ariaLabel}>
+        <span className="hidden shrink-0 text-xs font-bold text-[#B54E12] sm:inline">
+          Mengganggu
+        </span>
+
+        <div className="relative flex flex-1 items-center justify-between py-1">
+          {/* Garis slider horizontal di belakang lingkaran */}
+          <div className="pointer-events-none absolute left-4 right-4 top-1/2 h-[2.5px] -translate-y-1/2 rounded-full bg-gradient-to-r from-[#D98856]/70 via-[#C8C3B8] to-[#5B84B1]/75" />
+
+          {PERCEPTION_STEPS.map((step) => {
+            const active = value === step.val;
+            const ringStyle =
+              step.side === "neg"
+                ? active
+                  ? "border-[#C85A17] bg-[#C85A17] text-white shadow-[0_0_0_4px_rgba(200,90,23,0.18)]"
+                  : "border-[#C85A17] bg-[#FDFBF6] hover:bg-[#FCECE0]"
+                : step.side === "pos"
+                ? active
+                  ? "border-jade-700 bg-jade-700 text-white shadow-[0_0_0_4px_rgba(36,75,120,0.20)]"
+                  : "border-jade-700 bg-[#FDFBF6] hover:bg-jade-50"
+                : active
+                ? "border-[#6B7A8C] bg-[#6B7A8C] text-white shadow-[0_0_0_4px_rgba(107,122,140,0.18)]"
+                : "border-[#8C98A6] bg-[#FDFBF6] hover:bg-[#ECEFF3]";
+
+            return (
+              <button
+                key={step.val}
+                type="button"
+                role="radio"
+                aria-checked={active}
+                aria-label={step.label}
+                title={step.label}
+                onClick={() => onChange(step.val)}
+                className={`relative z-10 flex items-center justify-center rounded-full border-[2.5px] transition-all duration-150 ${
+                  step.size
+                } ${ringStyle} ${active ? "scale-105" : "hover:scale-105"}`}
+              >
+                {active && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+              </button>
+            );
+          })}
+        </div>
+
+        <span className="hidden shrink-0 text-xs font-bold text-jade-700 sm:inline">
+          Membantu
+        </span>
+      </div>
+
+      <div className="mt-2 flex justify-between text-[11.5px] text-[#687879] sm:hidden">
+        <span className="font-semibold text-[#B54E12]">Mengganggu</span>
+        <span>Netral</span>
+        <span className="font-semibold text-jade-700">Membantu</span>
+      </div>
+    </div>
+  );
 }
 
 export function Slide4EvaluationResult({
@@ -48,20 +144,15 @@ export function Slide4EvaluationResult({
   const [persepsiInstr, setPersepsiInstr] = useState(0);
   const [persepsiLirik, setPersepsiLirik] = useState(0);
   const [statusValid, setStatusValid] = useState<"valid" | "terdistraksi">("valid");
-  const [copiedType, setCopiedType] = useState<"result" | "link" | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [showReview, setShowReview] = useState(false);
 
-  const handleCopy = async (kind: "result" | "link") => {
-    if (!lockedResult) return;
+  const handleCopyLink = async () => {
     const shareUrl = typeof window !== "undefined" ? window.location.origin : "";
-    const text =
-      kind === "result"
-        ? `Hasil Tes Ruang Fokus (${lockedResult.inisial}):\n• Skor Instrumental (X): ${lockedResult.skor_instrumental}/100 (${lockedResult.benar_instrumental}/9 benar)\n• Skor Berlirik (Y): ${lockedResult.skor_berlirik}/100 (${lockedResult.benar_berlirik}/9 benar)\n• Tipe Fokus: ${lockedResult.persona.label}\nIkut tesnya juga di: ${shareUrl}`
-        : shareUrl;
-
     try {
-      await navigator.clipboard.writeText(text);
-      setCopiedType(kind);
-      setTimeout(() => setCopiedType(null), 2200);
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2200);
     } catch {
       // Abaikan jika clipboard ditolak
     }
@@ -73,9 +164,12 @@ export function Slide4EvaluationResult({
   if (lockedResult) {
     const absDiff = Math.abs(lockedResult.selisih_skor).toFixed(2);
     const instrHigher = lockedResult.selisih_skor >= 0;
+    const hasReview =
+      (lockedResult.review_instrumental?.length ?? 0) > 0 ||
+      (lockedResult.review_berlirik?.length ?? 0) > 0;
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-5">
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[#C59B5F] bg-parchment-300 px-3.5 py-1 text-xs font-bold text-[#7D5A24]">
             <Sparkles className="h-3.5 w-3.5" />
@@ -85,9 +179,6 @@ export function Slide4EvaluationResult({
             Halo, {lockedResult.inisial}! Tipe Fokusmu:{" "}
             <span className="text-jade-700">{lockedResult.persona.label}</span>
           </h2>
-          <p className="mt-1 text-sm text-[#4B6062]">
-            ID Sesi Tersimpan: <span className="font-mono font-semibold">{lockedResult.id_responden}</span> • Data telah direkam secara anonim.
-          </p>
         </div>
 
         {/* Two Variable Score Comparison Cards */}
@@ -131,13 +222,31 @@ export function Slide4EvaluationResult({
           </div>
         </div>
 
-        {/* Personalized Insight Card */}
-        <div className="rounded-xl border border-[#D5CBB8] bg-[#F5EFE0] p-5">
-          <h3 className="text-base font-bold text-[#1A2B42]">
-            Analisis Singkat Performa Kognitifmu (Selisih:{" "}
-            {lockedResult.selisih_skor >= 0 ? "+" : ""}
-            {lockedResult.selisih_skor.toFixed(2)} Poin)
-          </h3>
+        {/* Personalized Insight Card + Integrated Review Toggle */}
+        <div className="rounded-2xl border border-[#D5CBB8] bg-[#F5EFE0] p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h3 className="text-base font-bold text-[#1A2B42]">
+              Analisis Singkat Performa Kognitifmu (Selisih:{" "}
+              {lockedResult.selisih_skor >= 0 ? "+" : ""}
+              {lockedResult.selisih_skor.toFixed(2)} Poin)
+            </h3>
+
+            {hasReview && (
+              <button
+                type="button"
+                onClick={() => setShowReview((v) => !v)}
+                className="inline-flex h-9 shrink-0 items-center gap-1.5 self-start rounded-full border border-[#B89258] bg-[#FCF8EE] px-4 text-xs font-bold text-[#7D5A24] transition hover:bg-[#EFE6D2] sm:self-auto"
+              >
+                <ClipboardList className="h-3.5 w-3.5" />
+                <span>{showReview ? "Tutup Review Jawaban" : "Review Jawaban"}</span>
+                {showReview ? (
+                  <ChevronUp className="h-3.5 w-3.5" />
+                ) : (
+                  <ChevronDown className="h-3.5 w-3.5" />
+                )}
+              </button>
+            )}
+          </div>
           <p className="mt-2 text-[14.5px] leading-relaxed text-[#3B5254]">
             {lockedResult.persona.headline} Kamu mengaku terbiasa belajar dengan kondisi{" "}
             <strong>{lockedResult.kebiasaan_belajar.toLowerCase()}</strong>, dan pada tes
@@ -155,39 +264,49 @@ export function Slide4EvaluationResult({
           </p>
         </div>
 
-        {/* Share & Copy Actions */}
-        <div className="flex flex-wrap items-center gap-3 pt-1">
-          <button
-            type="button"
-            onClick={() => handleCopy("result")}
-            className="inline-flex h-12 items-center gap-2 rounded-full border-2 border-jade-600 bg-[#FBF8F0] px-6 text-[14.5px] font-bold text-jade-700 transition hover:bg-jade-50"
-          >
-            {copiedType === "result" ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <Copy className="h-4 w-4" />
-            )}
-            <span>
-              {copiedType === "result" ? "Hasil Tersalin!" : "Salin Kartu Hasil"}
-            </span>
-          </button>
+        {/* Review Jawaban Benar & Salah (Tes Instrumental & Berlirik) */}
+        {showReview && hasReview && (
+          <AnswerReviewPanel
+            instrumentalReview={lockedResult.review_instrumental ?? []}
+            berlirikReview={lockedResult.review_berlirik ?? []}
+          />
+        )}
 
-          <button
-            type="button"
-            onClick={() => handleCopy("link")}
-            className="inline-flex h-12 items-center gap-2 rounded-full bg-gradient-to-br from-[#326296] to-[#1D3E63] px-6 text-[14.5px] font-bold text-white shadow-[0_4px_12px_rgba(24,52,84,0.28)] transition hover:brightness-105"
-          >
-            {copiedType === "link" ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <Share2 className="h-4 w-4" />
-            )}
-            <span>
-              {copiedType === "link"
-                ? "Link Tersalin! Bagikan ke Grup"
-                : "Bagikan Link Tes ke Teman"}
-            </span>
-          </button>
+        {/* Penutup: Ucapan Terima Kasih & Tombol Aksi di Paling Bawah */}
+        <div className="flex flex-col gap-4 rounded-2xl border border-[#DFC99E] bg-[#FAF4E8] p-5 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFE3CC] text-[#9C5618]">
+              <Heart className="h-4 w-4 fill-current" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-[#1A2B42]">
+                Terima kasih banyak sudah meluangkan waktu mengikuti kuesioner ini!
+              </p>
+              <p className="mt-0.5 text-xs leading-relaxed text-[#5A6368]">
+                Partisipasimu sangat membantu kelancaran penelitian ini. Semoga hasil
+                singkat di atas juga bermanfaat untuk mengenal suasana belajar terbaikmu.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5 lg:shrink-0">
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-full bg-gradient-to-br from-[#326296] to-[#1D3E63] px-6 text-sm font-bold text-white shadow-[0_4px_12px_rgba(24,52,84,0.28)] transition hover:brightness-105"
+            >
+              {copiedLink ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Share2 className="h-4 w-4" />
+              )}
+              <span>
+                {copiedLink
+                  ? "Link Tersalin!"
+                  : "Bagikan Link Tes ke Teman"}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -228,20 +347,11 @@ export function Slide4EvaluationResult({
               {describeEffect(persepsiInstr)}
             </span>
           </div>
-          <input
-            type="range"
-            min={-10}
-            max={10}
-            step={1}
+          <PerceptionCircleScale
             value={persepsiInstr}
-            onChange={(e) => setPersepsiInstr(Number(e.target.value))}
-            className="mt-3 w-full accent-jade-700"
+            onChange={setPersepsiInstr}
+            ariaLabel="Pengaruh musik instrumental terhadap fokus"
           />
-          <div className="mt-1 flex justify-between text-xs text-[#687879]">
-            <span>-10 Sangat mengganggu</span>
-            <span>0 Netral</span>
-            <span>+10 Sangat membantu</span>
-          </div>
         </div>
 
         {/* Slider 2: Berlirik */}
@@ -262,20 +372,11 @@ export function Slide4EvaluationResult({
               {describeEffect(persepsiLirik)}
             </span>
           </div>
-          <input
-            type="range"
-            min={-10}
-            max={10}
-            step={1}
+          <PerceptionCircleScale
             value={persepsiLirik}
-            onChange={(e) => setPersepsiLirik(Number(e.target.value))}
-            className="mt-3 w-full accent-[#C85A17]"
+            onChange={setPersepsiLirik}
+            ariaLabel="Pengaruh musik berlirik terhadap fokus"
           />
-          <div className="mt-1 flex justify-between text-xs text-[#687879]">
-            <span>-10 Sangat mengganggu</span>
-            <span>0 Netral</span>
-            <span>+10 Sangat membantu</span>
-          </div>
         </div>
 
         {/* Cek Kejujuran */}

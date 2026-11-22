@@ -162,18 +162,681 @@ const VERIFIED_AUDIUS_SEEDS: Record<MusicMode, string[]> = {
     "Xla7a", // A Day B4 - Thvrsday
   ],
   lyrical: [
-    "JpjmKX2", // Keep On Loving - Kairo
-    "E06XaKR", // Late Summer Glow - Kairo
-    "41Wo4Jr", // Forever Young - Kairo
-    "2z0mOX1", // Shattered Glass - Kairo
-    "ogWAlqv", // Come Back To Me - Kairo
-    "apW23Vj", // Coastal Glow - Kairo
-    "QZkMXQ1", // Fading Lights - Kairo
-    "YajBbZq", // Your World - SIAS
-    "PWQm5",   // Turn Back Time - Candle
-    "E0768",   // Stay//Middle - Candle
+    "ZbZ4zZa", // Die With A Smile - Lady Gaga & Bruno Mars
+    "aW6rqjE", // BIRDS OF A FEATHER - Billie Eilish
+    "kKx0POX", // End Of Beginning - Djo
+    "QVPJ8G4", // Chocolate - The 1975
+    "gJKqd",   // I Wanna Be Yours - Arctic Monkeys
+    "62w39",   // Peradaban - .Feast
+    "AV1g0",   // Secukupnya - Hindia
+    "Oxg4V",   // Hati-Hati di Jalan - Tulus
+    "KbjZRxz", // Fix You - Coldplay
+    "VpoNy",   // DDU-DU DDU-DU - BLACKPINK
   ],
 };
+
+interface CuratedLyricalSpec {
+  id: string;
+  title: string;
+  artist: string;
+  durationSec: number;
+  genre: string;
+  tags: string[];
+}
+
+// Katalog 75 lagu berlirik populer & ikonik (Barat, K-Pop & Indonesia) terverifikasi HTTP 206 audio/mpeg di Audius
+const TRENDING_LYRICAL_SPECS: CuratedLyricalSpec[] = [
+  // --- Top Highlights Mix (Barat & Indo paling dikenal di posisi paling atas) ---
+  {
+    id: "ZbZ4zZa",
+    title: "Die With A Smile",
+    artist: "Lady Gaga & Bruno Mars",
+    durationSec: 249,
+    genre: "Pop",
+    tags: ["pop", "trending", "barat", "bruno mars", "lady gaga", "ballad"],
+  },
+  {
+    id: "aW6rqjE",
+    title: "BIRDS OF A FEATHER",
+    artist: "Billie Eilish",
+    durationSec: 230,
+    genre: "Pop",
+    tags: ["pop", "trending", "barat", "billie eilish", "indie"],
+  },
+  {
+    id: "kKx0POX",
+    title: "End Of Beginning",
+    artist: "Djo",
+    durationSec: 159,
+    genre: "Indie Pop",
+    tags: ["indie", "pop", "barat", "trending", "djo"],
+  },
+  {
+    id: "AV1g0",
+    title: "Secukupnya",
+    artist: "Hindia",
+    durationSec: 209,
+    genre: "Indie Indonesia",
+    tags: ["indie", "indo", "hindia", "feast", "baskara", "trending"],
+  },
+  {
+    id: "62w39",
+    title: "Peradaban",
+    artist: ".Feast",
+    durationSec: 388,
+    genre: "Indie Rock Indonesia",
+    tags: ["indie", "rock", "indo", "feast", "hindia", "baskara", "trending"],
+  },
+  {
+    id: "QVPJ8G4",
+    title: "Chocolate",
+    artist: "The 1975",
+    durationSec: 226,
+    genre: "Indie Pop / Alt Rock",
+    tags: ["indie", "pop", "rock", "barat", "the 1975", "1975", "trending"],
+  },
+  {
+    id: "gJKqd",
+    title: "I Wanna Be Yours (Cover)",
+    artist: "Arctic Monkeys",
+    durationSec: 273,
+    genre: "Indie Rock",
+    tags: ["indie", "rock", "barat", "arctic monkeys", "arctic monkey", "trending"],
+  },
+  {
+    id: "7O8YZgj",
+    title: "Mangu",
+    artist: "Fourtwnty",
+    durationSec: 262,
+    genre: "Indie Folk Indonesia",
+    tags: ["indie", "folk", "indo", "fourtwnty", "trending"],
+  },
+  {
+    id: "Oxg4V",
+    title: "Hati-Hati di Jalan",
+    artist: "Tulus",
+    durationSec: 242,
+    genre: "Pop Indonesia",
+    tags: ["pop", "indo", "tulus", "trending", "ballad"],
+  },
+  {
+    id: "p9a0K",
+    title: "Apocalypse",
+    artist: "Cigarettes After Sex",
+    durationSec: 290,
+    genre: "Dream Pop / Indie",
+    tags: ["indie", "pop", "barat", "cigarettes after sex", "trending"],
+  },
+  {
+    id: "2lp1bg1",
+    title: "Cruel Summer",
+    artist: "Taylor Swift",
+    durationSec: 179,
+    genre: "Pop",
+    tags: ["pop", "barat", "taylor swift", "trending"],
+  },
+  {
+    id: "KbjZRxz",
+    title: "Fix You",
+    artist: "Coldplay",
+    durationSec: 296,
+    genre: "Pop Rock",
+    tags: ["pop", "rock", "barat", "coldplay", "trending"],
+  },
+  {
+    id: "VpoNy",
+    title: "DDU-DU DDU-DU",
+    artist: "BLACKPINK",
+    durationSec: 215,
+    genre: "K-Pop",
+    tags: ["pop", "kpop", "blackpink", "black", "barat", "trending"],
+  },
+  {
+    id: "6xM2m",
+    title: "Sisa Rasa",
+    artist: "Mahalini",
+    durationSec: 328,
+    genre: "Pop Indonesia",
+    tags: ["pop", "indo", "trending", "mahalini", "galau", "ballad"],
+  },
+  {
+    id: "82Nw9",
+    title: "To The Bone",
+    artist: "Pamungkas",
+    durationSec: 318,
+    genre: "Indie Pop",
+    tags: ["indie", "pop", "indo", "trending", "pamungkas"],
+  },
+  {
+    id: "PWgX35N",
+    title: "Sailor Song",
+    artist: "Gigi Perez",
+    durationSec: 211,
+    genre: "Indie Folk",
+    tags: ["indie", "folk", "barat", "gigi perez", "trending"],
+  },
+  {
+    id: "dGjjYXy",
+    title: "Starboy (feat. Daft Punk)",
+    artist: "The Weeknd",
+    durationSec: 273,
+    genre: "Pop / R&B",
+    tags: ["pop", "rnb", "barat", "the weeknd", "weeknd", "trending"],
+  },
+  {
+    id: "MoPA5xm",
+    title: "betty (feat. White Chorus)",
+    artist: "Hindia",
+    durationSec: 265,
+    genre: "Indie Indonesia",
+    tags: ["indie", "indo", "hindia", "feast", "white chorus", "white", "trending"],
+  },
+  {
+    id: "JBzK2",
+    title: "Runtuh",
+    artist: "Feby Putri & Fiersa Besari",
+    durationSec: 224,
+    genre: "Indie Pop Indonesia",
+    tags: ["indie", "pop", "indo", "feby putri", "fiersa besari", "trending"],
+  },
+  {
+    id: "P9bZZ9R",
+    title: "Kangen",
+    artist: "Dewa 19",
+    durationSec: 333,
+    genre: "Pop Rock Indonesia",
+    tags: ["pop", "rock", "indo", "dewa 19", "dewa", "trending"],
+  },
+
+  // --- The 1975, Arctic Monkeys, Lady Gaga, BLACKPINK, Cigarettes After Sex ---
+  {
+    id: "PkMR0NN",
+    title: "Somebody Else (Cover)",
+    artist: "The 1975",
+    durationSec: 190,
+    genre: "Indie Pop",
+    tags: ["indie", "pop", "barat", "the 1975", "1975"],
+  },
+  {
+    id: "1av1d",
+    title: "Fluorescent Adolescent",
+    artist: "Arctic Monkeys",
+    durationSec: 176,
+    genre: "Indie Rock",
+    tags: ["indie", "rock", "barat", "arctic monkeys", "arctic monkey"],
+  },
+  {
+    id: "8ZYWq4W",
+    title: "Shallow (Cover)",
+    artist: "Lady Gaga & Bradley Cooper",
+    durationSec: 238,
+    genre: "Pop Ballad",
+    tags: ["pop", "barat", "lady gaga", "ballad"],
+  },
+  {
+    id: "0EbMk",
+    title: "Always Remember Us This Way (Acoustic)",
+    artist: "Lady Gaga",
+    durationSec: 136,
+    genre: "Pop Acoustic",
+    tags: ["pop", "barat", "lady gaga", "acoustic", "ballad"],
+  },
+  {
+    id: "V0gZP",
+    title: "How You Like That",
+    artist: "BLACKPINK",
+    durationSec: 185,
+    genre: "K-Pop",
+    tags: ["pop", "kpop", "blackpink", "black", "barat"],
+  },
+  {
+    id: "Nx9w31Q",
+    title: "Cry",
+    artist: "Cigarettes After Sex",
+    durationSec: 256,
+    genre: "Dream Pop / Indie",
+    tags: ["indie", "pop", "barat", "cigarettes after sex"],
+  },
+
+  // --- .Feast & Hindia ---
+  {
+    id: "PGOZ7",
+    title: "Berita Kehilangan (feat. Rayssa Dynta)",
+    artist: ".Feast",
+    durationSec: 254,
+    genre: "Indie Rock Indonesia",
+    tags: ["indie", "rock", "indo", "feast", "hindia", "baskara"],
+  },
+  {
+    id: "VpWqB",
+    title: "Rumah Ke Rumah",
+    artist: "Hindia",
+    durationSec: 277,
+    genre: "Indie Indonesia",
+    tags: ["indie", "indo", "hindia", "feast", "baskara"],
+  },
+  {
+    id: "Byxgj",
+    title: "Evakuasi",
+    artist: "Hindia",
+    durationSec: 218,
+    genre: "Indie Indonesia",
+    tags: ["indie", "indo", "hindia", "feast", "baskara"],
+  },
+  {
+    id: "b5gYb",
+    title: "Membasuh (feat. Rara Sekar)",
+    artist: "Hindia",
+    durationSec: 374,
+    genre: "Indie Indonesia",
+    tags: ["indie", "indo", "hindia", "feast", "baskara"],
+  },
+
+  // --- Coldplay, Bruno Mars, Taylor Swift, NIKI, Laufey, yung kai ---
+  {
+    id: "Z4bXj9v",
+    title: "Viva la Vida",
+    artist: "Coldplay",
+    durationSec: 242,
+    genre: "Pop Rock",
+    tags: ["pop", "rock", "barat", "coldplay"],
+  },
+  {
+    id: "M2GK9Xx",
+    title: "A Sky Full of Stars",
+    artist: "Coldplay",
+    durationSec: 266,
+    genre: "Pop Rock",
+    tags: ["pop", "rock", "barat", "coldplay"],
+  },
+  {
+    id: "MYw83bx",
+    title: "The Scientist",
+    artist: "Coldplay",
+    durationSec: 303,
+    genre: "Pop Rock",
+    tags: ["pop", "rock", "barat", "coldplay", "ballad"],
+  },
+  {
+    id: "km3BWaj",
+    title: "Paradise",
+    artist: "Coldplay",
+    durationSec: 274,
+    genre: "Pop Rock",
+    tags: ["pop", "rock", "barat", "coldplay"],
+  },
+  {
+    id: "8PyoG5p",
+    title: "Talking To The Moon",
+    artist: "Bruno Mars",
+    durationSec: 231,
+    genre: "Pop Ballad",
+    tags: ["pop", "barat", "bruno mars", "ballad"],
+  },
+  {
+    id: "yg0dkzr",
+    title: "Delicate",
+    artist: "Taylor Swift",
+    durationSec: 234,
+    genre: "Pop",
+    tags: ["pop", "barat", "taylor swift"],
+  },
+  {
+    id: "yBOJ7x",
+    title: "Bad Blood (feat. Kendrick Lamar)",
+    artist: "Taylor Swift",
+    durationSec: 244,
+    genre: "Pop",
+    tags: ["pop", "barat", "taylor swift", "kendrick lamar"],
+  },
+  {
+    id: "83NV8GP",
+    title: "You'll Be in My Heart (Cover)",
+    artist: "NIKI",
+    durationSec: 242,
+    genre: "Pop",
+    tags: ["pop", "barat", "indo", "niki", "indie", "acoustic"],
+  },
+  {
+    id: "rGwlxJY",
+    title: "blue (Cover)",
+    artist: "yung kai",
+    durationSec: 200,
+    genre: "Indie Pop",
+    tags: ["indie", "pop", "barat", "yung kai"],
+  },
+  {
+    id: "Ov9KV9Q",
+    title: "Let You Break My Heart Again",
+    artist: "Laufey",
+    durationSec: 272,
+    genre: "Folk / Jazz Pop",
+    tags: ["indie", "folk", "laufey", "barat", "acoustic"],
+  },
+  {
+    id: "51d9x3J",
+    title: "Falling Behind (Acoustic)",
+    artist: "Laufey",
+    durationSec: 213,
+    genre: "Indie Acoustic",
+    tags: ["indie", "acoustic", "laufey", "barat"],
+  },
+
+  // --- Indie Barat, Alt-Rock & Pop Hits Lainnya ---
+  {
+    id: "vgVQgmV",
+    title: "Here With Me",
+    artist: "d4vd",
+    durationSec: 221,
+    genre: "Indie Pop",
+    tags: ["indie", "pop", "barat", "d4vd"],
+  },
+  {
+    id: "GNkbj",
+    title: "Sunflower",
+    artist: "Rex Orange County",
+    durationSec: 258,
+    genre: "Indie Pop",
+    tags: ["indie", "pop", "barat", "rex orange county"],
+  },
+  {
+    id: "Kxlgo",
+    title: "Best Friend",
+    artist: "Rex Orange County",
+    durationSec: 262,
+    genre: "Indie Pop",
+    tags: ["indie", "pop", "barat", "rex orange county"],
+  },
+  {
+    id: "NQaybjx",
+    title: "death bed (coffee for your head)",
+    artist: "Powfu & beabadoobee",
+    durationSec: 173,
+    genre: "Indie Pop",
+    tags: ["indie", "pop", "barat", "powfu", "beabadoobee"],
+  },
+  {
+    id: "Ex46r",
+    title: "Creep",
+    artist: "Radiohead",
+    durationSec: 239,
+    genre: "Alternative Rock",
+    tags: ["rock", "indie", "barat", "radiohead"],
+  },
+  {
+    id: "xj5ZMkY",
+    title: "Wonderwall",
+    artist: "Oasis",
+    durationSec: 279,
+    genre: "Britpop / Rock",
+    tags: ["rock", "pop", "barat", "oasis"],
+  },
+  {
+    id: "3vMK0",
+    title: "Payphone",
+    artist: "Maroon 5",
+    durationSec: 222,
+    genre: "Pop",
+    tags: ["pop", "barat", "maroon 5"],
+  },
+  {
+    id: "mRZxr",
+    title: "Teenagers",
+    artist: "My Chemical Romance",
+    durationSec: 162,
+    genre: "Alt Rock",
+    tags: ["rock", "barat", "my chemical romance", "mcr"],
+  },
+  {
+    id: "7OK69Oy",
+    title: "I Don't Love You",
+    artist: "My Chemical Romance",
+    durationSec: 238,
+    genre: "Alt Rock",
+    tags: ["rock", "barat", "my chemical romance", "mcr"],
+  },
+  {
+    id: "WbGP6qv",
+    title: "Best Part (Acoustic Cover)",
+    artist: "Daniel Caesar ft. H.E.R.",
+    durationSec: 176,
+    genre: "R&B / Acoustic",
+    tags: ["rnb", "indie", "acoustic", "barat", "daniel caesar"],
+  },
+  {
+    id: "D7Pbv",
+    title: "you were good to me",
+    artist: "Jeremy Zucker & Chelsea Cutler",
+    durationSec: 227,
+    genre: "Indie Pop",
+    tags: ["indie", "pop", "barat", "jeremy zucker"],
+  },
+
+  // --- Pop & Indie Indonesia Populer ---
+  {
+    id: "ja9qV",
+    title: "Sepatu",
+    artist: "Tulus",
+    durationSec: 222,
+    genre: "Pop Indonesia",
+    tags: ["pop", "indo", "tulus"],
+  },
+  {
+    id: "JE9aZ6k",
+    title: "Kisah Sebentar",
+    artist: "Tulus",
+    durationSec: 175,
+    genre: "Pop Indonesia",
+    tags: ["pop", "indo", "tulus"],
+  },
+  {
+    id: "bl5QX",
+    title: "Tukar Jiwa",
+    artist: "Tulus",
+    durationSec: 230,
+    genre: "Pop Indonesia",
+    tags: ["pop", "indo", "tulus"],
+  },
+  {
+    id: "4W96VAa",
+    title: "Risalah Hati",
+    artist: "Dewa 19",
+    durationSec: 293,
+    genre: "Pop Rock Indonesia",
+    tags: ["pop", "rock", "indo", "dewa 19", "dewa"],
+  },
+  {
+    id: "Pg8861k",
+    title: "Separuh Nafas",
+    artist: "Dewa 19",
+    durationSec: 300,
+    genre: "Pop Rock Indonesia",
+    tags: ["pop", "rock", "indo", "dewa 19", "dewa"],
+  },
+  {
+    id: "bmPmJ",
+    title: "Aku Milikmu",
+    artist: "Dewa 19",
+    durationSec: 334,
+    genre: "Pop Rock Indonesia",
+    tags: ["pop", "rock", "indo", "dewa 19", "dewa"],
+  },
+  {
+    id: "NbP3YZ",
+    title: "Sephia",
+    artist: "Sheila on 7",
+    durationSec: 294,
+    genre: "Pop Rock Indonesia",
+    tags: ["pop", "rock", "indo", "sheila on 7", "so7"],
+  },
+  {
+    id: "Kxgry",
+    title: "Menghapus Jejakmu",
+    artist: "Peterpan",
+    durationSec: 185,
+    genre: "Pop Rock Indonesia",
+    tags: ["pop", "rock", "indo", "peterpan", "noah"],
+  },
+  {
+    id: "8M3Xv",
+    title: "Mungkin Nanti",
+    artist: "Peterpan",
+    durationSec: 269,
+    genre: "Pop Rock Indonesia",
+    tags: ["pop", "rock", "indo", "peterpan", "noah"],
+  },
+  {
+    id: "W64zv",
+    title: "Semua Tentang Kita",
+    artist: "Peterpan",
+    durationSec: 268,
+    genre: "Pop Rock Indonesia",
+    tags: ["pop", "rock", "indo", "peterpan", "noah"],
+  },
+  {
+    id: "JNWKz",
+    title: "Ada Apa Denganmu",
+    artist: "Peterpan",
+    durationSec: 281,
+    genre: "Pop Rock Indonesia",
+    tags: ["pop", "rock", "indo", "peterpan", "noah"],
+  },
+  {
+    id: "44gKd",
+    title: "Aku Tenang",
+    artist: "Fourtwnty",
+    durationSec: 232,
+    genre: "Indie Folk Indonesia",
+    tags: ["indie", "folk", "indo", "fourtwnty"],
+  },
+  {
+    id: "VEayP",
+    title: "Akad",
+    artist: "Payung Teduh",
+    durationSec: 259,
+    genre: "Indie Folk Indonesia",
+    tags: ["indie", "folk", "indo", "payung teduh"],
+  },
+  {
+    id: "3v0bZ",
+    title: "Desember",
+    artist: "Efek Rumah Kaca",
+    durationSec: 258,
+    genre: "Indie Rock Indonesia",
+    tags: ["indie", "rock", "indo", "efek rumah kaca", "erk"],
+  },
+  {
+    id: "REWzj",
+    title: "Waktu Yang Salah",
+    artist: "Fiersa Besari",
+    durationSec: 324,
+    genre: "Indie Pop Indonesia",
+    tags: ["indie", "pop", "indo", "fiersa besari"],
+  },
+  {
+    id: "yyE2Bm7",
+    title: "April",
+    artist: "Fiersa Besari",
+    durationSec: 262,
+    genre: "Indie Pop Indonesia",
+    tags: ["indie", "pop", "indo", "fiersa besari"],
+  },
+  {
+    id: "k4xaON3",
+    title: "Growing Up",
+    artist: "Nadin Amizah",
+    durationSec: 298,
+    genre: "Indie Folk",
+    tags: ["indie", "folk", "indo", "nadin amizah"],
+  },
+  {
+    id: "OZR0Jg",
+    title: "Ah",
+    artist: "Nadin Amizah",
+    durationSec: 232,
+    genre: "Indie Folk",
+    tags: ["indie", "folk", "indo", "nadin amizah", "acoustic"],
+  },
+  {
+    id: "mWgk2",
+    title: "Melawan Restu",
+    artist: "Mahalini",
+    durationSec: 260,
+    genre: "Pop Indonesia",
+    tags: ["pop", "indo", "mahalini", "ballad"],
+  },
+  {
+    id: "ORaKl",
+    title: "Hingga Tua Bersama",
+    artist: "Rizky Febian",
+    durationSec: 266,
+    genre: "Pop Indonesia",
+    tags: ["pop", "indo", "rizky febian", "ballad"],
+  },
+  {
+    id: "xPY6q",
+    title: "Laskar Pelangi",
+    artist: "Nidji",
+    durationSec: 234,
+    genre: "Pop Rock Indonesia",
+    tags: ["pop", "rock", "indo", "nidji"],
+  },
+  {
+    id: "M0o0X",
+    title: "Cinta dan Rahasia",
+    artist: "Yura Yunita ft. Glenn Fredly",
+    durationSec: 264,
+    genre: "Pop Indonesia",
+    tags: ["pop", "indo", "yura yunita", "glenn fredly"],
+  },
+  {
+    id: "82EG0q3",
+    title: "Bawalah Cintaku",
+    artist: "Afgan",
+    durationSec: 303,
+    genre: "Pop Indonesia",
+    tags: ["pop", "indo", "afgan", "ballad"],
+  },
+  {
+    id: "P7vxN",
+    title: "Merasa Indah",
+    artist: "Tiara Andini",
+    durationSec: 136,
+    genre: "Pop Indonesia",
+    tags: ["pop", "indo", "tiara andini", "ballad"],
+  },
+];
+
+const TRENDING_LYRICAL_TRACKS: SongTrack[] = TRENDING_LYRICAL_SPECS.map((spec) => ({
+  id: spec.id,
+  title: spec.title,
+  artist: spec.artist,
+  durationSec: spec.durationSec,
+  genre: spec.genre,
+  tags: spec.tags,
+  streamUrl: `${AUDIUS_BASE}/tracks/${encodeURIComponent(spec.id)}/stream?app_name=${APP_NAME}`,
+  mode: "lyrical",
+  source: "audius",
+}));
+
+function filterTrendingLyricalTracks(query: string): SongTrack[] {
+  const trimmed = query.trim().toLowerCase().replace(/^\.+/, "");
+  if (!trimmed) {
+    return TRENDING_LYRICAL_TRACKS;
+  }
+  const tokens = trimmed
+    .split(/\s+/)
+    .map((t) => t.replace(/^\.+/, ""))
+    .filter((t) => t.length >= 2 && !["lagu", "song", "music", "lyrics", "lirik", "vocal"].includes(t));
+  if (tokens.length === 0) return [];
+
+  return TRENDING_LYRICAL_TRACKS.filter((track) => {
+    const blob = `${track.title} ${track.artist} ${track.genre} ${track.tags.join(" ")}`
+      .toLowerCase()
+      .replace(/\./g, "");
+    return tokens.every((t) => blob.includes(t));
+  });
+}
 
 // Track instrumental Genshin Impact terverifikasi di Audius (piano/lofi/orchestral)
 const GENSHIN_AUDIUS_SEEDS = [
@@ -890,9 +1553,47 @@ export async function getFilteredSongs(
   query = ""
 ): Promise<{ tracks: SongTrack[]; fallbackUsed: boolean }> {
   const trimmed = query.trim();
-  const genshinQuery = mode === "instrumental" && isGenshinQuery(trimmed);
-  const genshinArchive =
-    mode === "instrumental" ? filterGenshinArchiveTracks(trimmed) : [];
+
+  // Mode BERLIRIK: utamakan 100% katalog lagu terkenal terverifikasi agar tidak tercampur lagu asing/antah-berantah.
+  // Pencarian live ke Audius hanya dipakai saat peserta mengetik artis/judul khusus yang tidak cukup ditemukan di katalog utama.
+  if (mode === "lyrical") {
+    const curatedMatches = filterTrendingLyricalTracks(trimmed);
+
+    if (!trimmed) {
+      return { tracks: curatedMatches, fallbackUsed: false };
+    }
+
+    if (curatedMatches.length >= 2) {
+      return { tracks: curatedMatches, fallbackUsed: false };
+    }
+
+    const [jamendo, audiusLive] = await Promise.all([
+      searchJamendoOptional(trimmed, "lyrical"),
+      searchAudiusLive(trimmed, "lyrical"),
+    ]);
+
+    const mergedLyrical = [...curatedMatches, ...jamendo, ...audiusLive];
+    const seenIds = new Set<string>();
+    const seenTitleArtist = new Set<string>();
+    const uniqueLyrical: SongTrack[] = [];
+
+    for (const track of mergedLyrical) {
+      const normKey = `${track.title.toLowerCase().trim()}::${track.artist.toLowerCase().trim()}`;
+      if (seenIds.has(track.id) || seenTitleArtist.has(normKey)) continue;
+      seenIds.add(track.id);
+      seenTitleArtist.add(normKey);
+      uniqueLyrical.push(track);
+    }
+
+    if (uniqueLyrical.length === 0) {
+      return { tracks: TRENDING_LYRICAL_TRACKS.slice(0, 15), fallbackUsed: true };
+    }
+
+    return { tracks: uniqueLyrical.slice(0, 40), fallbackUsed: false };
+  }
+
+  const genshinQuery = isGenshinQuery(trimmed);
+  const genshinArchive = filterGenshinArchiveTracks(trimmed);
 
   const [jamendo, audiusLive, audiusCurated, genshinAudiusRaw] = await Promise.all([
     searchJamendoOptional(trimmed, mode),

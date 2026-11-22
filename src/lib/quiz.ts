@@ -1,5 +1,6 @@
 import bankRaw from "@/data/bank_soal.json";
 import type {
+  AnswerReviewItem,
   ChoiceKey,
   FullQuestion,
   PublicQuestion,
@@ -8,7 +9,8 @@ import type {
 } from "@/types/research";
 
 const ALL_QUESTIONS = bankRaw.soal as FullQuestion[];
-export const MAX_SECONDS_PER_QUESTION = 45;
+export const MAX_SECONDS_PER_QUESTION = 20;
+export const MAX_SECONDS_PER_ROUND = 180; // 3 menit universal per tes (9 soal)
 
 function shuffle<T>(arr: T[]): T[] {
   const copy = [...arr];
@@ -58,37 +60,61 @@ const QUESTION_MAP = new Map<string, FullQuestion>(
 );
 
 /**
- * Menghitung skor kontinu 0.00 - 100.00 (75% ketepatan + 25% bonus kecepatan waktu)
+ * Menghitung skor kontinu 0.00 - 100.00 untuk mode ujian universal 3:00 (9 soal):
+ * 75% ketepatan jawaban + 25% bonus kecepatan pengerjaan total (proporsional terhadap ketepatan).
  */
 export function gradeRoundAnswers(answers: QuestionAnswerRecord[]): {
   score: number;
   correctCount: number;
   avgResponseMs: number;
   questionIds: string;
+  review: AnswerReviewItem[];
 } {
   const total = 9;
-  let points = 0;
+  const maxRoundMs = MAX_SECONDS_PER_ROUND * 1000;
   let correctCount = 0;
   let totalTimeMs = 0;
+  let answeredCount = 0;
+  const review: AnswerReviewItem[] = [];
 
   for (const ans of answers) {
     const q = QUESTION_MAP.get(ans.questionId);
-    const clampedMs = Math.max(200, Math.min(MAX_SECONDS_PER_QUESTION * 1000, ans.responseTimeMs));
-    totalTimeMs += clampedMs;
+    const safeMs = Math.max(0, Math.min(maxRoundMs, ans.responseTimeMs));
+    totalTimeMs += safeMs;
 
-    if (q && !ans.timedOut && ans.selected === q.kunci) {
-      correctCount += 1;
-      const remainingSec = Math.max(0, MAX_SECONDS_PER_QUESTION - clampedMs / 1000);
-      const speedRatio = remainingSec / MAX_SECONDS_PER_QUESTION;
-      points += (75 + 25 * speedRatio) / total;
+    const isCorrect = Boolean(q && ans.selected !== null && !ans.timedOut && ans.selected === q.kunci);
+    if (ans.selected !== null && !ans.timedOut) {
+      answeredCount += 1;
+      if (isCorrect) {
+        correctCount += 1;
+      }
+    }
+
+    if (q) {
+      review.push({
+        questionId: q.id,
+        pertanyaan: q.pertanyaan,
+        pilihan: q.pilihan,
+        selected: ans.timedOut ? null : ans.selected,
+        kunci: q.kunci,
+        isCorrect,
+      });
     }
   }
+
+  const clampedRoundMs = Math.min(maxRoundMs, totalTimeMs);
+  const accuracyRatio = correctCount / total;
+  const speedRatio = Math.max(0, (maxRoundMs - clampedRoundMs) / maxRoundMs);
+  const points = (75 + 25 * speedRatio) * accuracyRatio;
+
+  const divisor = answeredCount > 0 ? answeredCount : Math.max(1, answers.length);
 
   return {
     score: Number(points.toFixed(2)),
     correctCount,
-    avgResponseMs: answers.length > 0 ? Math.round(totalTimeMs / answers.length) : 0,
+    avgResponseMs: Math.round(clampedRoundMs / divisor),
     questionIds: answers.map((a) => a.questionId).join(","),
+    review,
   };
 }
 
