@@ -1,12 +1,26 @@
 import { neon } from "@neondatabase/serverless";
 import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import type { GradedResponseRecord } from "@/types/research";
 
 const LOCAL_FILE = path.join(process.cwd(), ".local-data", "submissions.json");
+const TMP_FALLBACK_FILE = path.join(os.tmpdir(), "ruang-fokus-submissions.json");
+
+export function getNeonUrl(): string {
+  let raw = (
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_URL ||
+    process.env.NEON_DATABASE_URL ||
+    ""
+  ).trim();
+  raw = raw.replace(/^(DATABASE_URL|POSTGRES_URL|NEON_DATABASE_URL)\s*=\s*/i, "").trim();
+  raw = raw.replace(/^["']+|["']+$/g, "").trim();
+  return raw;
+}
 
 export function isNeonConfigured(): boolean {
-  const url = process.env.DATABASE_URL?.trim() || "";
+  const url = getNeonUrl();
   return /^postgres(ql)?:\/\//i.test(url) && !url.includes("TEMPEL_");
 }
 
@@ -14,7 +28,7 @@ let schemaInitialized = false;
 
 async function ensureNeonSchema() {
   if (!isNeonConfigured() || schemaInitialized) return;
-  const sql = neon(process.env.DATABASE_URL!);
+  const sql = neon(getNeonUrl());
   await sql`
     CREATE TABLE IF NOT EXISTS responses (
       id_responden            TEXT PRIMARY KEY,
@@ -53,10 +67,34 @@ async function ensureNeonSchema() {
   schemaInitialized = true;
 }
 
+async function readLocalList(): Promise<GradedResponseRecord[]> {
+  for (const filePath of [LOCAL_FILE, TMP_FALLBACK_FILE]) {
+    try {
+      const raw = await fs.readFile(filePath, "utf-8");
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed as GradedResponseRecord[];
+    } catch {
+      // Coba lokasi berikutnya
+    }
+  }
+  return [];
+}
+
+async function writeLocalList(list: GradedResponseRecord[]): Promise<void> {
+  const payload = JSON.stringify(list, null, 2);
+  try {
+    await fs.mkdir(path.dirname(LOCAL_FILE), { recursive: true });
+    await fs.writeFile(LOCAL_FILE, payload, "utf-8");
+  } catch {
+    // Fallback ke os.tmpdir() jika filesystem serverless (seperti Vercel /var/task) bersifat read-only
+    await fs.writeFile(TMP_FALLBACK_FILE, payload, "utf-8");
+  }
+}
+
 export async function saveSubmission(record: GradedResponseRecord): Promise<"neon" | "local"> {
   if (isNeonConfigured()) {
     await ensureNeonSchema();
-    const sql = neon(process.env.DATABASE_URL!);
+    const sql = neon(getNeonUrl());
     await sql`
       INSERT INTO responses (
         id_responden, device_id, submitted_at, urutan_kondisi,
@@ -85,16 +123,9 @@ export async function saveSubmission(record: GradedResponseRecord): Promise<"neo
     return "neon";
   }
 
-  await fs.mkdir(path.dirname(LOCAL_FILE), { recursive: true });
-  let list: GradedResponseRecord[] = [];
-  try {
-    const raw = await fs.readFile(LOCAL_FILE, "utf-8");
-    list = JSON.parse(raw) as GradedResponseRecord[];
-  } catch {
-    list = [];
-  }
+  const list = await readLocalList();
   list.push(record);
-  await fs.writeFile(LOCAL_FILE, JSON.stringify(list, null, 2), "utf-8");
+  await writeLocalList(list);
   return "local";
 }
 
@@ -104,7 +135,7 @@ export async function listSubmissions(): Promise<{
 }> {
   if (isNeonConfigured()) {
     await ensureNeonSchema();
-    const sql = neon(process.env.DATABASE_URL!);
+    const sql = neon(getNeonUrl());
     const rows = await sql`SELECT * FROM responses ORDER BY submitted_at DESC`;
     return {
       storage: "neon",
@@ -118,13 +149,8 @@ export async function listSubmissions(): Promise<{
     };
   }
 
-  try {
-    const raw = await fs.readFile(LOCAL_FILE, "utf-8");
-    const rows = JSON.parse(raw) as GradedResponseRecord[];
-    return { storage: "local", rows: [...rows].reverse() };
-  } catch {
-    return { storage: "local", rows: [] };
-  }
+  const rows = await readLocalList();
+  return { storage: "local", rows: [...rows].reverse() };
 }
 
 export async function deleteSubmission(idResponden: string): Promise<boolean> {
@@ -132,18 +158,13 @@ export async function deleteSubmission(idResponden: string): Promise<boolean> {
 
   if (isNeonConfigured()) {
     await ensureNeonSchema();
-    const sql = neon(process.env.DATABASE_URL!);
+    const sql = neon(getNeonUrl());
     await sql`DELETE FROM responses WHERE id_responden = ${idResponden}`;
     return true;
   }
 
-  try {
-    const raw = await fs.readFile(LOCAL_FILE, "utf-8");
-    const list = JSON.parse(raw) as GradedResponseRecord[];
-    const filtered = list.filter((r) => r.id_responden !== idResponden);
-    await fs.writeFile(LOCAL_FILE, JSON.stringify(filtered, null, 2), "utf-8");
-    return filtered.length !== list.length;
-  } catch {
-    return false;
-  }
+  const list = await readLocalList();
+  const filtered = list.filter((r) => r.id_responden !== idResponden);
+  await writeLocalList(filtered);
+  return filtered.length !== list.length;
 }

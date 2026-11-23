@@ -1064,9 +1064,9 @@ export function SlideQuizRound({
   const unansweredCount = questions.length - answeredCount;
 
   return (
-    <div className="grid grid-cols-1 gap-7 lg:grid-cols-12 lg:gap-8">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-7">
       {/* Left Panel: Navigasi Nomor Soal (1-9), Submit & Pemutar Audio Ringkas */}
-      <div className="flex flex-col justify-between gap-5 border-b border-[#E6DEC8] pb-5 lg:col-span-4 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
+      <div className="flex flex-col justify-between gap-4 border-b border-[#E6DEC8] pb-5 lg:col-span-4 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-6">
         <div>
           {isPractice && onExitPractice && (
             <button
@@ -1076,7 +1076,7 @@ export function SlideQuizRound({
                 audioRef.current = null;
                 onExitPractice();
               }}
-              className="mb-3 inline-flex items-center gap-1.5 rounded-lg border border-[#D5CEBF] bg-[#FBF8F0] px-3 py-1.5 text-xs font-bold text-[#3B4E50] transition hover:border-jade-600/60 hover:text-jade-800"
+              className="mb-2.5 inline-flex items-center gap-1.5 rounded-lg border border-[#D5CEBF] bg-[#FBF8F0] px-3 py-1.5 text-xs font-bold text-[#3B4E50] transition hover:border-jade-600/60 hover:text-jade-800"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Kembali ke Menu Utama</span>
@@ -1093,17 +1093,17 @@ export function SlideQuizRound({
             {isPractice ? `COBA TES 0${roundNumber} • SIMULASI` : `TES 0${roundNumber} • AKTIF`}
           </span>
 
-          <h2 className="mt-3 text-2xl font-bold text-jade-900">
+          <h2 className="mt-2.5 text-2xl font-bold text-jade-900">
             {isInstrumental ? "Musik Instrumental" : "Musik Berlirik"}
           </h2>
 
-          {/* Navigasi Nomor Soal 3x3 + Timer Ringkas */}
-          <div className="mt-4 rounded-xl border border-[#DDD3BE] bg-[#FBF8F0] p-4">
+          {/* Navigasi Nomor Soal 3x3 + Timer Ringkas (Anti-Overflow di Semua Ukuran Layar) */}
+          <div className="mt-3 overflow-hidden rounded-xl border border-[#DDD3BE] bg-[#FBF8F0] p-3.5">
             <div className="text-xs font-bold text-[#1A2B42]">Navigasi Soal</div>
 
-            <div className="mt-3 flex items-stretch gap-3.5">
+            <div className="mt-2.5 flex items-stretch gap-2.5">
               {/* Grid 3 x 3 Lingkaran Nomor Soal (1-9) */}
-              <div className="grid shrink-0 grid-cols-3 gap-2">
+              <div className="grid shrink-0 grid-cols-3 gap-1.5">
                 {questions.map((item, idx) => {
                   const isCurrent = idx === currentIdx;
                   const isAnswered = selectedAnswers[idx] !== null;
@@ -1127,7 +1127,7 @@ export function SlideQuizRound({
                       type="button"
                       onClick={() => handleJumpToQuestion(idx)}
                       aria-label={`Pindah ke soal ${idx + 1}${isAnswered ? " (sudah dijawab)" : ""}`}
-                      className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all ${circleCls}`}
+                      className={`flex h-9 w-9 items-center justify-center rounded-full text-[13.5px] font-bold transition-all ${circleCls}`}
                     >
                       {idx + 1}
                     </button>
@@ -1136,22 +1136,22 @@ export function SlideQuizRound({
               </div>
 
               {/* Panel Samping: Sisa Waktu & Status Terjawab */}
-              <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-[#E5DEC9] bg-[#F5F0E2]/70 px-3 py-2.5 text-center">
-                <div className="flex items-center gap-1 text-[11px] font-semibold text-[#5A6E70]">
-                  <Clock className="h-3.5 w-3.5 text-[#687879]" />
-                  <span>Sisa waktu</span>
+              <div className="flex min-w-0 flex-1 flex-col items-center justify-center rounded-xl border border-[#E5DEC9] bg-[#F5F0E2]/70 px-2 py-2 text-center">
+                <div className="flex items-center gap-1 text-[10.5px] font-semibold text-[#5A6E70]">
+                  <Clock className="h-3 w-3 shrink-0 text-[#687879]" />
+                  <span className="truncate">Sisa waktu</span>
                 </div>
-                <div className="mt-1 text-xl font-bold tabular-nums tracking-tight text-[#1A2B42]">
+                <div className="mt-0.5 text-lg font-bold tabular-nums tracking-tight text-[#1A2B42]">
                   {formatTimerMmSs(roundSecondsLeft)}
                 </div>
-                <div className="my-2 h-px w-10 bg-[#DCD3BF]" />
-                <div className="text-xs font-semibold text-[#4B6062]">
+                <div className="my-1.5 h-px w-8 bg-[#DCD3BF]" />
+                <div className="text-[11px] font-semibold leading-tight text-[#4B6062]">
                   {answeredCount}/{questions.length} terjawab
                 </div>
               </div>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-3">
               {confirmSubmitOpen ? (
                 <div className="rounded-lg border border-[#E8C699] bg-[#FBE5C8]/65 p-3 text-xs text-[#80370B]">
                   <p className="font-semibold">
@@ -1178,7 +1178,7 @@ export function SlideQuizRound({
                 <button
                   type="button"
                   onClick={handleRequestSubmit}
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#326296] to-[#1D3E63] px-5 text-sm font-bold text-white shadow-[0_4px_12px_rgba(24,52,84,0.24)] transition hover:brightness-105"
+                  className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-br from-[#326296] to-[#1D3E63] px-4 text-sm font-bold text-white shadow-[0_4px_12px_rgba(24,52,84,0.24)] transition hover:brightness-105"
                 >
                   <Send className="h-3.5 w-3.5" />
                   <span>
@@ -1193,8 +1193,8 @@ export function SlideQuizRound({
         </div>
 
         {/* Pemutar Audio Ringkas (tanpa label "Sedang Diputar" & tanpa footer panjang) */}
-        <div className="rounded-xl border border-[#DDD3BE] bg-[#FBF8F0] px-3.5 py-3">
-          <div className="mb-1.5 flex items-center gap-1.5 text-[11.5px] font-bold text-jade-800">
+        <div className="rounded-xl border border-[#DDD3BE] bg-[#FBF8F0] px-3.5 py-2.5">
+          <div className="mb-1 flex items-center gap-1.5 text-[11.5px] font-bold text-jade-800">
             <Headphones className="h-3.5 w-3.5 shrink-0" />
             <span>Pemutar Audio Tes {roundNumber}</span>
           </div>
@@ -1229,14 +1229,14 @@ export function SlideQuizRound({
           </div>
 
           {/* Question Card */}
-          <div className="mt-4 rounded-xl border border-[#D5CBB8] bg-[#F5F0E2] p-5 sm:p-6">
-            <p className="text-[16.5px] font-semibold leading-relaxed text-[#1A2B42]">
+          <div className="mt-3 rounded-xl border border-[#D5CBB8] bg-[#F5F0E2] p-4 sm:p-5">
+            <p className="text-[16px] font-semibold leading-relaxed text-[#1A2B42]">
               {q.pertanyaan}
             </p>
           </div>
 
           {/* 4 Option Cards */}
-          <div className="mt-4 space-y-3">
+          <div className="mt-3 space-y-2.5">
             {(["A", "B", "C", "D"] as const).map((key) => {
               const isSelected = currentSelected === key;
               return (
@@ -1244,14 +1244,14 @@ export function SlideQuizRound({
                   key={key}
                   type="button"
                   onClick={() => handleSelectOption(key)}
-                  className={`flex w-full items-center gap-4 rounded-[10px] border p-3.5 text-left transition-all ${
+                  className={`flex w-full items-center gap-3.5 rounded-[10px] border p-3 text-left transition-all ${
                     isSelected
                       ? "border-jade-600 bg-jade-50 font-bold text-jade-800 shadow-sm"
                       : "border-[#D8D0C1] bg-[#FBF8F0] text-[#243447] hover:border-jade-600/60 hover:bg-jade-50/40"
                   }`}
                 >
                   <span
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm font-bold ${
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs font-bold ${
                       isSelected
                         ? "border-jade-700 bg-jade-700 text-white"
                         : "border-[#BFB5A2] bg-[#EFECE2] text-[#3B4E50]"
@@ -1259,7 +1259,7 @@ export function SlideQuizRound({
                   >
                     {key}
                   </span>
-                  <span className="text-[15.5px] leading-snug">{q.pilihan[key]}</span>
+                  <span className="text-[15px] leading-snug">{q.pilihan[key]}</span>
                 </button>
               );
             })}
@@ -1267,7 +1267,7 @@ export function SlideQuizRound({
         </div>
 
         {/* Bottom Prev / Next Navigation */}
-        <div className="mt-5 flex items-center justify-between gap-3 pt-1">
+        <div className="mt-4 flex items-center justify-between gap-3 pt-1">
           <button
             type="button"
             disabled={currentIdx === 0}
