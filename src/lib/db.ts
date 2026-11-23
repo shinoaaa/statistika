@@ -6,7 +6,8 @@ import type { GradedResponseRecord } from "@/types/research";
 const LOCAL_FILE = path.join(process.cwd(), ".local-data", "submissions.json");
 
 export function isNeonConfigured(): boolean {
-  return Boolean(process.env.DATABASE_URL && process.env.DATABASE_URL.trim().length > 0);
+  const url = process.env.DATABASE_URL?.trim() || "";
+  return /^postgres(ql)?:\/\//i.test(url) && !url.includes("TEMPEL_");
 }
 
 let schemaInitialized = false;

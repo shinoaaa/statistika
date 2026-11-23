@@ -132,7 +132,7 @@ export function Slide1Profile({ onNext, onStartPractice }: Slide1ProfileProps) {
               maxLength={24}
               value={inisial}
               onChange={(e) => setInisial(e.target.value)}
-              placeholder="Contoh: Nabil"
+              placeholder="Contoh: Udin"
               className="h-12 w-full rounded-[10px] border border-[#D5CEBF] bg-[#F4F1E8] px-4 text-[15px] text-jade-900 placeholder:text-[#8C9694] focus:border-jade-600 focus:outline-none focus:ring-2 focus:ring-jade-600/20"
             />
           </div>

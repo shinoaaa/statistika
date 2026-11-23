@@ -235,7 +235,7 @@ export default function HomePage() {
 
         {(activeSlide === 1 || activeSlide === 4) && !isPracticeMode && (
           <p className="mt-1 text-center text-[11px] font-medium tracking-wide text-[#243B55]/60">
-            UI Reference: Arkavidia
+            &copy; 2026 Kelompok 3 &bull; UI Reference: Arkavidia
           </p>
         )}
       </div>
