@@ -56,8 +56,13 @@ function escapeCsvCell(value: unknown): string {
   return s;
 }
 
+function getConfiguredPasskey(): string {
+  const raw = (process.env.ADMIN_PASSKEY || "").trim();
+  return raw.replace(/^["']+|["']+$/g, "").trim();
+}
+
 function isAuthorized(request: NextRequest): boolean {
-  const requiredPasskey = process.env.ADMIN_PASSKEY?.trim();
+  const requiredPasskey = getConfiguredPasskey();
   if (!requiredPasskey) {
     // Di production (Vercel), wajib ada ADMIN_PASSKEY agar data tidak pernah terbuka ke publik
     return process.env.NODE_ENV !== "production";
@@ -65,11 +70,11 @@ function isAuthorized(request: NextRequest): boolean {
   const { searchParams } = new URL(request.url);
   const suppliedKey =
     request.headers.get("x-admin-passkey") || searchParams.get("key") || "";
-  return suppliedKey === requiredPasskey;
+  return suppliedKey.trim() === requiredPasskey;
 }
 
 export async function GET(request: NextRequest) {
-  const requiredPasskey = process.env.ADMIN_PASSKEY?.trim();
+  const requiredPasskey = getConfiguredPasskey();
   const { searchParams } = new URL(request.url);
 
   if (!isAuthorized(request)) {

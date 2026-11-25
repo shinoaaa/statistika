@@ -1,27 +1,77 @@
 import { neon } from "@neondatabase/serverless";
 import fs from "node:fs/promises";
-import os from "node:os";
 import path from "node:path";
 import type { GradedResponseRecord } from "@/types/research";
 
 const LOCAL_FILE = path.join(process.cwd(), ".local-data", "submissions.json");
-const TMP_FALLBACK_FILE = path.join(os.tmpdir(), "ruang-fokus-submissions.json");
 
-export function getNeonUrl(): string {
-  let raw = (
-    process.env.DATABASE_URL ||
-    process.env.POSTGRES_URL ||
-    process.env.NEON_DATABASE_URL ||
-    ""
-  ).trim();
-  raw = raw.replace(/^(DATABASE_URL|POSTGRES_URL|NEON_DATABASE_URL)\s*=\s*/i, "").trim();
+const NEON_ENV_PRIORITY = [
+  "DATABASE_URL",
+  "POSTGRES_URL",
+  "NEON_DATABASE_URL",
+  "POSTGRES_PRISMA_URL",
+  "DATABASE_URL_UNPOOLED",
+  "POSTGRES_URL_NON_POOLING",
+  "NEON_URL",
+];
+
+function sanitizeNeonConnectionString(rawValue: string): string {
+  let raw = rawValue.trim();
+  // Bersihkan awalan "export KEY=" atau "KEY=" bila ter-copy bersama nama variabel
+  raw = raw.replace(/^(export\s+)?[A-Z0-9_]+\s*=\s*/i, "").trim();
+  // Bersihkan awalan "psql " bila user copy dari tab psql di Neon Console
+  raw = raw.replace(/^psql\s+/i, "").trim();
+  // Bersihkan tanda kutip tunggal/ganda di awal & akhir
   raw = raw.replace(/^["']+|["']+$/g, "").trim();
   return raw;
 }
 
-export function isNeonConfigured(): boolean {
-  const url = getNeonUrl();
+function isValidPostgresUrl(url: string): boolean {
   return /^postgres(ql)?:\/\//i.test(url) && !url.includes("TEMPEL_");
+}
+
+export function getNeonEnvInfo(): { source: string | null; url: string } {
+  for (const key of NEON_ENV_PRIORITY) {
+    const val = process.env[key];
+    if (!val) continue;
+    const cleaned = sanitizeNeonConnectionString(val);
+    if (isValidPostgresUrl(cleaned)) {
+      return { source: key, url: cleaned };
+    }
+  }
+
+  // Fallback: cari env var dari Vercel Neon/Postgres Integration dengan custom prefix (mis. STORAGE_DATABASE_URL)
+  for (const [key, val] of Object.entries(process.env)) {
+    if (!val || NEON_ENV_PRIORITY.includes(key)) continue;
+    if (!/(DATABASE|POSTGRES|NEON).*URL$/i.test(key)) continue;
+    const cleaned = sanitizeNeonConnectionString(val);
+    if (isValidPostgresUrl(cleaned)) {
+      return { source: key, url: cleaned };
+    }
+  }
+
+  return { source: null, url: "" };
+}
+
+export function getNeonUrl(): string {
+  return getNeonEnvInfo().url;
+}
+
+export function isNeonConfigured(): boolean {
+  return Boolean(getNeonEnvInfo().url);
+}
+
+export function isVercelRuntime(): boolean {
+  return process.env.VERCEL === "1" || Boolean(process.env.VERCEL_ENV);
+}
+
+export class NeonNotConfiguredError extends Error {
+  constructor() {
+    super(
+      "Database Neon belum terhubung di Vercel. Tambahkan DATABASE_URL di Vercel Environment Variables lalu lakukan Redeploy."
+    );
+    this.name = "NeonNotConfiguredError";
+  }
 }
 
 let schemaInitialized = false;
@@ -68,26 +118,63 @@ async function ensureNeonSchema() {
 }
 
 async function readLocalList(): Promise<GradedResponseRecord[]> {
-  for (const filePath of [LOCAL_FILE, TMP_FALLBACK_FILE]) {
-    try {
-      const raw = await fs.readFile(filePath, "utf-8");
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed as GradedResponseRecord[];
-    } catch {
-      // Coba lokasi berikutnya
-    }
+  try {
+    const raw = await fs.readFile(LOCAL_FILE, "utf-8");
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed as GradedResponseRecord[];
+  } catch {
+    // Belum ada file lokal
   }
   return [];
 }
 
 async function writeLocalList(list: GradedResponseRecord[]): Promise<void> {
   const payload = JSON.stringify(list, null, 2);
+  await fs.mkdir(path.dirname(LOCAL_FILE), { recursive: true });
+  await fs.writeFile(LOCAL_FILE, payload, "utf-8");
+}
+
+export async function checkNeonHealth(): Promise<{
+  neonConfigured: boolean;
+  neonEnvSource: string | null;
+  dbStatus: "connected" | "unconfigured" | "error";
+  dbError: string | null;
+  totalRows: number | null;
+}> {
+  const { source, url } = getNeonEnvInfo();
+  if (!url) {
+    return {
+      neonConfigured: false,
+      neonEnvSource: null,
+      dbStatus: "unconfigured",
+      dbError: null,
+      totalRows: null,
+    };
+  }
+
   try {
-    await fs.mkdir(path.dirname(LOCAL_FILE), { recursive: true });
-    await fs.writeFile(LOCAL_FILE, payload, "utf-8");
-  } catch {
-    // Fallback ke os.tmpdir() jika filesystem serverless (seperti Vercel /var/task) bersifat read-only
-    await fs.writeFile(TMP_FALLBACK_FILE, payload, "utf-8");
+    await ensureNeonSchema();
+    const sql = neon(url);
+    const res = await sql`SELECT COUNT(*)::int AS total FROM responses`;
+    const total = Number(res[0]?.total ?? 0);
+    return {
+      neonConfigured: true,
+      neonEnvSource: source,
+      dbStatus: "connected",
+      dbError: null,
+      totalRows: total,
+    };
+  } catch (err) {
+    const rawMsg = err instanceof Error ? err.message : String(err);
+    // Pastikan tidak pernah membocorkan connection string / password
+    const safeMsg = rawMsg.replace(/postgres(ql)?:\/\/\S+/gi, "[REDACTED_DB_URL]");
+    return {
+      neonConfigured: true,
+      neonEnvSource: source,
+      dbStatus: "error",
+      dbError: safeMsg,
+      totalRows: null,
+    };
   }
 }
 
@@ -121,6 +208,11 @@ export async function saveSubmission(record: GradedResponseRecord): Promise<"neo
       )
     `;
     return "neon";
+  }
+
+  // Di Vercel, JANGAN diam-diam fallback ke /tmp karena datanya sementara & tidak masuk Neon
+  if (isVercelRuntime()) {
+    throw new NeonNotConfiguredError();
   }
 
   const list = await readLocalList();

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
-import { saveSubmission } from "@/lib/db";
+import { NeonNotConfiguredError, saveSubmission } from "@/lib/db";
 import { getFocusPersona, gradeRoundAnswers } from "@/lib/quiz";
 import type { GradedResponseRecord, SubmitRequestBody } from "@/types/research";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
@@ -98,8 +100,11 @@ export async function POST(request: NextRequest) {
     });
   } catch (err) {
     console.error("Submit error:", err);
+    if (err instanceof NeonNotConfiguredError) {
+      return NextResponse.json({ error: err.message }, { status: 500 });
+    }
     return NextResponse.json(
-      { error: "Gagal menyimpan hasil tes." },
+      { error: "Gagal menyimpan hasil tes ke database." },
       { status: 500 }
     );
   }
