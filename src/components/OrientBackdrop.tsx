@@ -59,10 +59,11 @@ function CloudCornerOrnament({ className }: { className?: string }) {
 export function OrientLandscapeBackground() {
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+      {/* Desktop & Tablet Landscape Shanshui Backdrop */}
       <svg
         viewBox="0 0 1440 810"
         preserveAspectRatio="xMidYMid slice"
-        className="h-full w-full"
+        className="hidden h-full w-full md:block"
         aria-hidden="true"
       >
         <defs>
@@ -218,6 +219,212 @@ export function OrientLandscapeBackground() {
           </g>
         </g>
       </svg>
+
+      {/* Mobile Portrait Shanshui Backdrop */}
+      <div
+        className="relative block h-full w-full md:hidden"
+        aria-hidden="true"
+        style={{
+          background:
+            "linear-gradient(180deg, #FCEAD4 0%, #F6EDE2 20%, #E7EEF5 46%, #C5D7EA 74%, #95B2D1 100%)",
+        }}
+      >
+        {/* Warm top-right sun aura & lower cool indigo depth */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at 88% 8%, rgba(242, 182, 126, 0.55) 0%, rgba(245, 204, 164, 0.24) 26%, rgba(252, 234, 212, 0) 56%), radial-gradient(ellipse at 12% 92%, rgba(49, 77, 107, 0.24) 0%, transparent 48%), radial-gradient(ellipse at 88% 92%, rgba(49, 77, 107, 0.24) 0%, transparent 48%)",
+          }}
+        />
+
+        {/* Top-anchored Sun, Cloud Wisp & Bamboo Sprig (never cropped on short screens) */}
+        <svg
+          viewBox="0 0 430 165"
+          preserveAspectRatio="xMidYMin slice"
+          className="absolute inset-x-0 top-0 aspect-[86/33] max-h-[30vh] w-full"
+        >
+          <defs>
+            <radialGradient id="mTopSunGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#EFAC70" stopOpacity="0.78" />
+              <stop offset="45%" stopColor="#F4C79C" stopOpacity="0.34" />
+              <stop offset="100%" stopColor="#FCEAD4" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+
+          <circle cx="378" cy="48" r="96" fill="url(#mTopSunGlow)" />
+          <circle cx="378" cy="48" r="28" fill="#F5BE88" opacity="0.58" />
+
+          {/* Upper sky cloud wisp */}
+          <path
+            d="M 232,76 C 254,64 282,64 302,72 C 318,58 348,58 366,70 C 384,66 402,72 406,82 L 226,82 Z"
+            fill="#FBF8F2"
+            opacity="0.68"
+          />
+
+          {/* Top-left delicate bamboo */}
+          <g opacity="0.86">
+            <path
+              d="M 22,-6 Q 15,52 -4,116"
+              fill="none"
+              stroke="#2B4969"
+              strokeWidth="4.6"
+              strokeLinecap="round"
+            />
+            <path
+              d="M 4,-6 Q -1,36 -8,72"
+              fill="none"
+              stroke="#456B8F"
+              strokeWidth="3.2"
+              strokeLinecap="round"
+            />
+            <path d="M 17,22 Q 46,15 66,29 Q 42,33 17,22 Z" fill="#213C59" />
+            <path d="M 17,22 Q 43,34 57,54 Q 33,46 17,22 Z" fill="#325375" />
+            <path d="M 9,56 Q 36,52 52,66 Q 30,68 9,56 Z" fill="#456B8F" />
+            <path d="M 3,84 Q 26,82 40,94 Q 20,95 3,84 Z" fill="#325375" />
+          </g>
+        </svg>
+
+        {/* Bottom-anchored Shanshui Mountains, Mist, Corner Rocks & Bamboo */}
+        <svg
+          viewBox="0 0 430 250"
+          preserveAspectRatio="xMidYMax slice"
+          className="absolute inset-x-0 bottom-0 aspect-[43/25] max-h-[44vh] w-full"
+        >
+          <defs>
+            <linearGradient id="mBotMtnFarGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#86A2C1" stopOpacity="0.68" />
+              <stop offset="100%" stopColor="#C9D9EB" stopOpacity="0.18" />
+            </linearGradient>
+            <linearGradient id="mBotMtnMidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#52769E" stopOpacity="0.84" />
+              <stop offset="100%" stopColor="#ACC3DC" stopOpacity="0.32" />
+            </linearGradient>
+            <linearGradient id="mBotRockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#4E6E91" />
+              <stop offset="58%" stopColor="#314D6B" />
+              <stop offset="100%" stopColor="#1C3047" />
+            </linearGradient>
+            <linearGradient id="mBotWaterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#D7E5F3" stopOpacity="0.52" />
+              <stop offset="100%" stopColor="#A1BCD8" stopOpacity="0.64" />
+            </linearGradient>
+          </defs>
+
+          {/* Distant Layered Mountains */}
+          <path
+            d="M -14,175 L 34,62 C 50,28 74,30 92,64 L 138,136 L 182,88 C 198,70 218,74 236,102 L 284,175 Z"
+            fill="url(#mBotMtnFarGrad)"
+          />
+          <path
+            d="M 168,176 L 236,84 C 254,58 278,60 294,88 L 330,136 L 382,36 C 400,6 422,8 438,44 L 444,176 Z"
+            fill="url(#mBotMtnFarGrad)"
+          />
+
+          {/* Mid-ground Shanshui Peaks */}
+          <path
+            d="M -14,225 L 22,116 C 38,82 64,84 82,116 L 134,186 L 176,144 C 192,128 212,130 228,154 L 274,225 Z"
+            fill="url(#mBotMtnMidGrad)"
+          />
+          <path
+            d="M 206,226 L 272,138 C 288,114 310,116 326,140 L 362,184 L 404,92 C 418,68 434,70 444,98 L 444,226 Z"
+            fill="url(#mBotMtnMidGrad)"
+          />
+
+          {/* Soft Mountain-Waist Clouds */}
+          <g transform="translate(-14, 118)" opacity="0.72">
+            <path
+              d="M 0,36 C 14,22 36,20 52,27 C 66,12 90,12 104,25 C 118,19 136,26 140,39 L 0,39 Z"
+              fill="#FBF8F2"
+            />
+          </g>
+          <g transform="translate(298, 112)" opacity="0.7">
+            <path
+              d="M 6,38 C 18,24 40,22 56,29 C 70,14 94,14 108,27 C 122,21 138,28 142,40 L 6,40 Z"
+              fill="#FBF8F2"
+            />
+          </g>
+
+          {/* Translucent Mist Waves (keeps mountain silhouettes visible behind stepper) */}
+          <path
+            d="M 0,168 C 96,148 192,184 288,162 C 350,148 396,166 430,156 L 430,250 L 0,250 Z"
+            fill="url(#mBotWaterGrad)"
+          />
+          <path
+            d="M 0,202 C 118,186 238,216 344,196 C 384,188 412,198 430,192 L 430,250 L 0,250 Z"
+            fill="#B7CDE4"
+            opacity="0.48"
+          />
+
+          {/* Bottom-Left & Bottom-Right Faceted Ink-Wash Rocks */}
+          <g transform="translate(0, 152)">
+            <path
+              d="M -8,104 L -8,34 L 22,18 L 52,28 L 76,62 L 96,104 Z"
+              fill="url(#mBotRockGrad)"
+            />
+            <path
+              d="M -8,34 L 22,18 L 38,54 L 12,76 L -8,64 Z"
+              fill="#6A8BAE"
+              opacity="0.58"
+            />
+            <path d="M 54,104 L 70,74 L 96,70 L 116,104 Z" fill="#253D56" />
+          </g>
+          <g transform="translate(430, 154) scale(-1, 1)">
+            <path
+              d="M -8,102 L -8,36 L 20,20 L 50,30 L 74,64 L 94,102 Z"
+              fill="url(#mBotRockGrad)"
+            />
+            <path
+              d="M -8,36 L 20,20 L 36,54 L 10,76 L -8,66 Z"
+              fill="#6A8BAE"
+              opacity="0.58"
+            />
+            <path d="M 50,102 L 66,72 L 92,68 L 110,102 Z" fill="#253D56" />
+          </g>
+
+          {/* Lower Edge Bamboo Framing Corners */}
+          <g opacity="0.92">
+            <path
+              d="M 10,254 Q 18,156 32,48"
+              fill="none"
+              stroke="#294666"
+              strokeWidth="5.2"
+              strokeLinecap="round"
+            />
+            <path
+              d="M 2,210 Q 9,145 18,90"
+              fill="none"
+              stroke="#3F6285"
+              strokeWidth="3.6"
+              strokeLinecap="round"
+            />
+            <path d="M 30,62 Q 56,55 72,68 Q 50,72 30,62 Z" fill="#213C59" />
+            <path d="M 30,62 Q 52,74 64,92 Q 42,84 30,62 Z" fill="#325375" />
+            <path d="M 24,106 Q 48,100 64,114 Q 44,116 24,106 Z" fill="#456B8F" />
+            <path d="M 16,158 Q 42,148 60,158 Q 38,166 16,158 Z" fill="#213C59" />
+          </g>
+          <g opacity="0.92">
+            <path
+              d="M 420,254 Q 412,154 398,42"
+              fill="none"
+              stroke="#294666"
+              strokeWidth="5"
+              strokeLinecap="round"
+            />
+            <path
+              d="M 428,208 Q 421,144 412,88"
+              fill="none"
+              stroke="#3F6285"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+            />
+            <path d="M 400,56 Q 374,49 358,62 Q 380,66 400,56 Z" fill="#213C59" />
+            <path d="M 400,56 Q 378,68 366,86 Q 388,78 400,56 Z" fill="#325375" />
+            <path d="M 406,100 Q 382,94 366,108 Q 386,110 406,100 Z" fill="#456B8F" />
+            <path d="M 414,152 Q 388,142 370,152 Q 392,160 414,152 Z" fill="#213C59" />
+          </g>
+        </svg>
+      </div>
     </div>
   );
 }
